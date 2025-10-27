@@ -1,6 +1,5 @@
 package com.web.milhas.entity;
 
-import com.web.milhas.entity.enums.TipoNotificacao;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -8,35 +7,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
-@Table(name = "notificacao", schema = "milhas")
+@Table(name = "saldo_pontos", schema = "milhas")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class NotificacaoEntity {
+public class SaldoPontosEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String mensagem;
-
-    @Column(nullable = false)
-    private boolean lida = false;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoNotificacao tipo;
-
-    @Column(nullable = false)
-    private LocalDateTime dataEnvio;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalPontos;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "programa_pontos_id", nullable = false)
+    private ProgamaPontosEntity programaPontos;
+
+    @OneToMany(mappedBy = "saldoPontos")
+    private Set<MovimentacaoPontosEntity> movimentacoes;
 }

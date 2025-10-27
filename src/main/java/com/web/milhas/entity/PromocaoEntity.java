@@ -7,29 +7,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "comprovante_compra", schema = "milhas")
+@Table(name = "promocao", schema = "milhas")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class ComprovanteCompraEntity {
+public class PromocaoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String nomeArquivo;
+    private String titulo;
 
-    @Column(nullable = false)
-    private String tipoArquivo; // Ex: application/pdf, image/png
+    @Column(columnDefinition = "TEXT")
+    private String descricao;
 
-    @Column(nullable = false)
-    private String urlArquivo; // Caminho (ex: S3 ou local) onde o arquivo está salvo
+    private String urlPromocao;
+
+    private LocalDate dataInicio;
+
+    private LocalDate dataFim;
 
     @ManyToOne
-    @JoinColumn(name = "compra_id", nullable = false)
-    private CompraEntity compra;
+    @JoinColumn(name = "programa_pontos_id", nullable = false)
+    private ProgamaPontosEntity programaPontos;
 }
