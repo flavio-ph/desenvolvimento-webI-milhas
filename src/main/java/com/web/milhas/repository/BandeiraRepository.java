@@ -1,4 +1,7 @@
 package com.web.milhas.repository;
 
-public interface BandeiraRepository {
+import com.web.milhas.entity.BandeiraEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BandeiraRepository extends JpaRepository<BandeiraEntity, Long> {
 }
