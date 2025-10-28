@@ -1,4 +1,5 @@
 package com.web.milhas.dto.auth;
 
-public record AuthResponse() {
+public record AuthResponse(
+    String token) {
 }
