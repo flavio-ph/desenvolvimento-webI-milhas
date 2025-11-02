@@ -2,9 +2,8 @@ package com.web.milhas.dto.usuario;
 
 import java.time.LocalDateTime;
 
-public record UsuarioResponseDTO(
+public record UsuarioResponse(
     Long id,
     String nome,
-    String email,
-    LocalDateTime dataCadastro
+    String email
 ) {}

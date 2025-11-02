@@ -8,8 +8,9 @@ import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
 
-    // Método essencial para o UserDetailsServiceImpl carregar o usuário
     Optional<UserDetails> findByEmail(String email);
 
     Optional<UsuarioEntity> findEntityByEmail(String email);
+
+    Optional<UsuarioEntity> findByResetPasswordToken(String token);
 }

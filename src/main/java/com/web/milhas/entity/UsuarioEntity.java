@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,12 @@ public class UsuarioEntity implements UserDetails {
     @Column(nullable = false)
     private String senha;
 
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetPasswordTokenExpiry;
+
     @OneToMany(mappedBy = "usuario")
     private Set<CartaoEntity> cartoes;
 
@@ -45,11 +52,8 @@ public class UsuarioEntity implements UserDetails {
     @OneToMany(mappedBy = "usuario")
     private Set<NotificacaoEntity> notificacoes;
 
-    // Implementação dos métodos UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO: Retornar roles (ex: new SimpleGrantedAuthority("ROLE_" + role.name()))
-        // Por enquanto, usuário padrão:
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
@@ -82,4 +86,6 @@ public class UsuarioEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }
