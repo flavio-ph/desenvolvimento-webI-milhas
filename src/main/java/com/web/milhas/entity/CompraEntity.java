@@ -36,7 +36,6 @@ public class CompraEntity {
     @Column(nullable = false)
     private LocalDate dataCompra;
 
-    // Requisito: "Exibir quanto tempo falta para os pontos serem creditados"
     private LocalDate dataCreditoPrevista;
 
     @Enumerated(EnumType.STRING)

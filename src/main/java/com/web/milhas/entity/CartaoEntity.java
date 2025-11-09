@@ -23,15 +23,12 @@ public class CartaoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Ex: "Meu Visa Infinite"
     @Column(nullable = false)
     private String nomePersonalizado;
 
-    // Ex: 1234
     @Column(length = 4)
     private String ultimosDigitos;
 
-    // Fator para cálculo de pontos (ex: 2.5 pontos por dólar/real)
     @Column(precision = 10, scale = 2)
     private BigDecimal fatorConversao;
 

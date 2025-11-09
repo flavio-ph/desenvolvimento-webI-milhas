@@ -24,10 +24,10 @@ public class ComprovanteCompraEntity {
     private String nomeArquivo;
 
     @Column(nullable = false)
-    private String tipoArquivo; // Ex: application/pdf, image/png
+    private String tipoArquivo;
 
     @Column(nullable = false)
-    private String urlArquivo; // Caminho (ex: S3 ou local) onde o arquivo está salvo
+    private String urlArquivo;
 
     @ManyToOne
     @JoinColumn(name = "compra_id", nullable = false)
