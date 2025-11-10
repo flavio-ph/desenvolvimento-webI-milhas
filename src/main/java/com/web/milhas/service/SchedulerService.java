@@ -45,6 +45,7 @@ public class SchedulerService {
 
             if (simularSucesso) {
                 compra.setStatus(StatusCompra.CREDITADO);
+                saldoService.creditarPontosCompra(compra);
                 notificacaoService.criarNotificacao(
                         compra.getCartao().getUsuario(),
                         "Seus pontos da compra '" + compra.getDescricao() + "' foram creditados com sucesso!",
