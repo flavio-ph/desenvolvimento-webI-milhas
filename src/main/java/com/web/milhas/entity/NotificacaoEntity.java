@@ -39,4 +39,8 @@ public class NotificacaoEntity {
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "compra_id")
+    private CompraEntity compra;
 }

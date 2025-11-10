@@ -52,7 +52,8 @@ public class SaldoService {
                 saldoSalvo,
                 TipoMovimentacao.ACUMULO,
                 compra.getPontosCalculados(),
-                "Crédito da compra: " + compra.getDescricao()
+                "Crédito da compra: " + compra.getDescricao(),
+                compra
         );
     }
 

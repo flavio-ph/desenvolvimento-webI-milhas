@@ -1,6 +1,7 @@
 package com.web.milhas.service;
 
 import com.web.milhas.dto.notificacao.NotificacaoResponse;
+import com.web.milhas.entity.CompraEntity;
 import com.web.milhas.entity.NotificacaoEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.TipoNotificacao;
@@ -32,13 +33,14 @@ public class NotificacaoService {
     }
 
     @Transactional
-    public void criarNotificacao(UsuarioEntity destinatario, String mensagem, TipoNotificacao tipo) {
+    public void criarNotificacao(UsuarioEntity destinatario, String mensagem, TipoNotificacao tipo, CompraEntity compraRelacionada) {
         NotificacaoEntity notificacao = new NotificacaoEntity();
         notificacao.setUsuario(destinatario);
         notificacao.setMensagem(mensagem);
         notificacao.setTipo(tipo);
         notificacao.setDataEnvio(LocalDateTime.now());
         notificacao.setLida(false);
+        notificacao.setCompra(compraRelacionada);
 
         notificacaoRepository.save(notificacao);
     }
@@ -46,21 +48,19 @@ public class NotificacaoService {
     @Transactional
     public void notificarTodos(String mensagem, TipoNotificacao tipo) {
         List<UsuarioEntity> todosUsuarios = usuarioRepository.findAll();
-        todosUsuarios.forEach(usuario -> criarNotificacao(usuario, mensagem, tipo));
+        todosUsuarios.forEach(usuario -> criarNotificacao(usuario, mensagem, tipo, null));
     }
+
 
     @Transactional
     public void marcarComoLida(Long idNotificacao, String emailUsuario) {
         UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
-
         NotificacaoEntity notificacao = notificacaoRepository.findById(idNotificacao)
                 .orElseThrow(() -> new ResourceNotFoundException("Notificação não encontrada."));
-
         if (!notificacao.getUsuario().getId().equals(usuario.getId())) {
             throw new ResourceNotFoundException("Notificação não encontrada para este usuário.");
         }
-
         notificacao.setLida(true);
         notificacaoRepository.save(notificacao);
     }

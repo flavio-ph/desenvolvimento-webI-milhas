@@ -39,4 +39,8 @@ public class MovimentacaoPontosEntity {
     @ManyToOne
     @JoinColumn(name = "saldo_pontos_id", nullable = false)
     private SaldoPontosEntity saldoPontos;
+
+    @ManyToOne
+    @JoinColumn(name = "compra_id")
+    private CompraEntity compra;
 }

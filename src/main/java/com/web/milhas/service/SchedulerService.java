@@ -20,6 +20,7 @@ public class SchedulerService {
 
     private final CompraRepository compraRepository;
     private final NotificacaoService notificacaoService;
+    private final SaldoService saldoService;
     private static final Logger log = LoggerFactory.getLogger(SchedulerService.class);
 
 
@@ -48,16 +49,18 @@ public class SchedulerService {
                 saldoService.creditarPontosCompra(compra);
                 notificacaoService.criarNotificacao(
                         compra.getCartao().getUsuario(),
-                        "Seus pontos da compra '" + compra.getDescricao() + "' foram creditados com sucesso!",
-                        TipoNotificacao.CREDITO_REALIZADO
+                        "Seus pontos da compra '" + compra.getDescricao() + "' foram creditados!",
+                        TipoNotificacao.CREDITO_REALIZADO,
+                        compra
                 );
                 log.info("Compra ID {} atualizada para CREDITADO.", compra.getId());
             } else {
                 compra.setStatus(StatusCompra.EXPIRADO);
                 notificacaoService.criarNotificacao(
                         compra.getCartao().getUsuario(),
-                        "ATENÇÃO: O prazo de crédito da compra '" + compra.getDescricao() + "' expirou. Verifique com a central.",
-                        TipoNotificacao.EXPIRACAO_PRAZO
+                        "ATENÇÃO: O prazo da compra '" + compra.getDescricao() + "' expirou.",
+                        TipoNotificacao.EXPIRACAO_PRAZO,
+                        compra
                 );
                 log.warn("Compra ID {} atualizada para EXPIRADO.", compra.getId());
             }

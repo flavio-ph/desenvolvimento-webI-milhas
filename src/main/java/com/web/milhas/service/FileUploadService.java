@@ -7,7 +7,7 @@ import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.CompraRepository;
 import com.web.milhas.repository.ComprovanteCompraRepository;
 import com.web.milhas.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,24 +21,28 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class FileUploadService {
 
     private final CompraRepository compraRepository;
     private final ComprovanteCompraRepository comprovanteRepository;
     private final UsuarioRepository usuarioRepository;
+    private final Path storageLocation;
 
-    private final Path storageLocation = Paths.get("./uploads").toAbsolutePath().normalize();
+    public FileUploadService(
+            CompraRepository compraRepository,
+            ComprovanteCompraRepository comprovanteRepository,
+            UsuarioRepository usuarioRepository,
+            @Value("${file.upload-dir}") String uploadDir) {
 
-    public FileUploadService(CompraRepository compraRepository, ComprovanteCompraRepository comprovanteRepository, UsuarioRepository usuarioRepository) {
         this.compraRepository = compraRepository;
         this.comprovanteRepository = comprovanteRepository;
         this.usuarioRepository = usuarioRepository;
+        this.storageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
 
         try {
             Files.createDirectories(this.storageLocation);
         } catch (Exception ex) {
-            throw new RuntimeException("Não foi possível criar o diretório para upload.", ex);
+            throw new RuntimeException("Não foi possível criar o diretório para upload em: " + this.storageLocation, ex);
         }
     }
 
@@ -54,9 +58,17 @@ public class FileUploadService {
             throw new ResourceNotFoundException("Compra não pertence ao usuário.");
         }
 
-        [cite_start]
         String nomeOriginal = StringUtils.cleanPath(arquivo.getOriginalFilename());
-        String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
+        if (nomeOriginal.contains("..")) {
+            throw new RuntimeException("Nome de arquivo inválido " + nomeOriginal);
+        }
+
+        String extensao = "";
+        int i = nomeOriginal.lastIndexOf('.');
+        if (i > 0) {
+            extensao = nomeOriginal.substring(i);
+        }
+
         String nomeUnico = UUID.randomUUID().toString() + extensao;
 
         try {
@@ -67,7 +79,7 @@ public class FileUploadService {
             comprovante.setCompra(compra);
             comprovante.setNomeArquivo(nomeOriginal);
             comprovante.setTipoArquivo(arquivo.getContentType());
-            comprovante.setUrlArquivo(targetLocation.toString()); 
+            comprovante.setUrlArquivo(targetLocation.toString());
 
             comprovanteRepository.save(comprovante);
 
