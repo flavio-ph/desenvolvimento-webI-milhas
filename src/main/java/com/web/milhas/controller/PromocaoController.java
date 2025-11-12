@@ -2,8 +2,7 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.promocao.PromocaoRequest;
 import com.web.milhas.dto.promocao.PromocaoResponse;
-import com.web.milhas.repository.PromocaoRepository;
-import com.web.milhas.service.PromocaoService;
+import com.web.milhas.service.impl.PromocaoServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PromocaoController {
 
-    private final PromocaoService promocaoService;
+    private final PromocaoServiceImpl promocaoServiceImpl;
 
     @GetMapping
     public ResponseEntity<List<PromocaoResponse>> listar() {
-        return ResponseEntity.ok(promocaoService.listarAtivas());
+        return ResponseEntity.ok(promocaoServiceImpl.listarAtivas());
     }
 
     @PostMapping
     public ResponseEntity<PromocaoResponse> salvar(@Valid @RequestBody PromocaoRequest dto){
-        return ResponseEntity.ok(promocaoService.criarPromocao(dto));
+        return ResponseEntity.ok(promocaoServiceImpl.criarPromocao(dto));
     }
 }

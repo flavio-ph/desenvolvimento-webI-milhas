@@ -1,7 +1,7 @@
 package com.web.milhas.controller;
 
 import com.web.milhas.dto.saldo.SaldoPontosResponse;
-import com.web.milhas.service.SaldoService;
+import com.web.milhas.service.impl.SaldoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,12 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SaldoController {
 
-    private final SaldoService saldoService;
+    private final SaldoServiceImpl saldoServiceImpl;
 
     @GetMapping("/me")
     public ResponseEntity<List<SaldoPontosResponse>> getMeusSaldos(
             @AuthenticationPrincipal UserDetails userDetails) {
         
-        return ResponseEntity.ok(saldoService.consultarSaldos(userDetails.getUsername()));
+        return ResponseEntity.ok(saldoServiceImpl.consultarSaldos(userDetails.getUsername()));
     }
 }

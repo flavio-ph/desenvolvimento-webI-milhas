@@ -9,5 +9,6 @@ public record MovimentacaoPontosResponse(
     TipoMovimentacao tipo,
     BigDecimal quantidadePontos,
     LocalDateTime dataMovimentacao,
-    String descricao
+    String descricao,
+    String nomePrograma
 ) {}

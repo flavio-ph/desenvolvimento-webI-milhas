@@ -6,7 +6,7 @@ import com.web.milhas.dto.auth.PasswordResetRequest; // IMPORTAR
 import com.web.milhas.dto.auth.RegisterRequest;
 import com.web.milhas.dto.auth.UpdatePasswordRequest; // IMPORTAR
 import com.web.milhas.security.JwtTokenProvider;
-import com.web.milhas.service.UsuarioService; // TROCAR IMPORT
+import com.web.milhas.service.impl.UsuarioServiceImpl; // TROCAR IMPORT
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class AuthController {
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioServiceImpl;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequestDTO req) {
@@ -41,20 +41,20 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registrar(@Valid @RequestBody RegisterRequest req) {
-        usuarioService.registrarUsuario(req);
+        usuarioServiceImpl.registrarUsuario(req);
     }
 
     @PostMapping("/forgot-password")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> forgotPassword(@Valid @RequestBody PasswordResetRequest req) {
-        usuarioService.requestPasswordReset(req.email());
+        usuarioServiceImpl.requestPasswordReset(req.email());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reset-password")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> resetPassword(@Valid @RequestBody UpdatePasswordRequest req) {
-        usuarioService.resetPassword(req);
+        usuarioServiceImpl.resetPassword(req);
         return ResponseEntity.ok().build();
     }
 }

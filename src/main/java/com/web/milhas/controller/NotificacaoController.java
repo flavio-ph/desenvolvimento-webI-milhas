@@ -1,7 +1,7 @@
 package com.web.milhas.controller;
 
 import com.web.milhas.dto.notificacao.NotificacaoResponse;
-import com.web.milhas.service.NotificacaoService;
+import com.web.milhas.service.impl.NotificacaoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,19 +15,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificacaoController {
 
-    private final NotificacaoService notificacaoService;
+    private final NotificacaoServiceImpl notificacaoServiceImpl;
 
     @GetMapping
     public ResponseEntity<List<NotificacaoResponse>> listarMinhas(
             @AuthenticationPrincipal UserDetails userDetails) {
-                return ResponseEntity.ok(notificacaoService.listarMinhasNotificacoes(userDetails.getUsername()));
+                return ResponseEntity.ok(notificacaoServiceImpl.listarMinhasNotificacoes(userDetails.getUsername()));
              }
 
     @PatchMapping("/{id}/lida")
     public ResponseEntity<NotificacaoResponse> marcarComoLida(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
-        notificacaoService.marcarComoLida(id, userDetails.getUsername());
+        notificacaoServiceImpl.marcarComoLida(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 

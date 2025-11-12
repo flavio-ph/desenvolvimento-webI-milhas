@@ -2,7 +2,7 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.usuario.UsuarioResponse;
 import com.web.milhas.dto.usuario.UsuarioUpdateRequest;
-import com.web.milhas.service.UsuarioService;
+import com.web.milhas.service.impl.UsuarioServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UsuarioController {
 
-    private final UsuarioService usuarioService;
+    private final UsuarioServiceImpl usuarioServiceImpl;
 
     @GetMapping("/me")
     public ResponseEntity<UsuarioResponse> getMyProfile(
             @AuthenticationPrincipal UserDetails userDetails) {
                 String userEmail = userDetails.getUsername();
-                return ResponseEntity.ok(usuarioService.getProfile(userEmail));
+                return ResponseEntity.ok(usuarioServiceImpl.getProfile(userEmail));
     }
 
     @PutMapping("/me")
@@ -30,7 +30,7 @@ public class UsuarioController {
             @Valid @RequestBody UsuarioUpdateRequest dto) {
 
         String userEmail = userDetails.getUsername();
-        return ResponseEntity.ok(usuarioService.updateProfile(userEmail, dto));
+        return ResponseEntity.ok(usuarioServiceImpl.updateProfile(userEmail, dto));
 
     }
 
