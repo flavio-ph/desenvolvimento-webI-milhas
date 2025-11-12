@@ -2,8 +2,8 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.compra.CompraRequest;
 import com.web.milhas.dto.compra.CompraResponse;
-import com.web.milhas.service.impl.CompraServiceImpl;
-import com.web.milhas.service.impl.FileUploadServiceImpl;
+import com.web.milhas.service.CompraService; // <-- CORREÇÃO: Importa a interface
+import com.web.milhas.service.FileUploadService; // <-- CORREÇÃO: Importa a interface
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,15 +18,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CompraController {
 
-    private final CompraServiceImpl compraServiceImpl;
-    private final FileUploadServiceImpl fileUploadService;
+    private final CompraService compraService; // <-- CORREÇÃO: Injeta a interface
+    private final FileUploadService fileUploadService; // <-- CORREÇÃO: Injeta a interface
 
     @PostMapping
     public ResponseEntity<CompraResponse> registrarCompra(
             @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody CompraRequest dto) {
 
-        CompraResponse response = compraServiceImpl.registrarCompra(dto, userDetails.getUsername());
+        CompraResponse response = compraService.registrarCompra(dto, userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

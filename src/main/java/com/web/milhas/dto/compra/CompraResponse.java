@@ -13,5 +13,6 @@ public record CompraResponse(
     LocalDate dataCreditoPrevista,
     StatusCompra status,
     Long cartaoId,
-    String nomeCartao
+    String nomeCartao,
+    Integer diasParaCredito
 ) {}

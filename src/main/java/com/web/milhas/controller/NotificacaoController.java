@@ -1,7 +1,7 @@
 package com.web.milhas.controller;
 
 import com.web.milhas.dto.notificacao.NotificacaoResponse;
-import com.web.milhas.service.impl.NotificacaoServiceImpl;
+import com.web.milhas.service.NotificacaoService; // <-- CORREÇÃO: Importa a interface
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,22 +15,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificacaoController {
 
-    private final NotificacaoServiceImpl notificacaoServiceImpl;
+    private final NotificacaoService notificacaoService;
 
     @GetMapping
     public ResponseEntity<List<NotificacaoResponse>> listarMinhas(
             @AuthenticationPrincipal UserDetails userDetails) {
-                return ResponseEntity.ok(notificacaoServiceImpl.listarMinhasNotificacoes(userDetails.getUsername()));
-             }
-
-    @PatchMapping("/{id}/lida")
-    public ResponseEntity<NotificacaoResponse> marcarComoLida(
-            @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        notificacaoServiceImpl.marcarComoLida(id, userDetails.getUsername());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(notificacaoService.listarMinhasNotificacoes(userDetails.getUsername()));
     }
 
-
-
+    @PatchMapping("/{id}/lida")
+    public ResponseEntity<Void> marcarComoLida(
+                                                @PathVariable Long id,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
+        notificacaoService.marcarComoLida(id, userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }

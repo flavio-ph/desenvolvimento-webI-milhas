@@ -2,7 +2,7 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.cartao.CartaoRequest;
 import com.web.milhas.dto.cartao.CartaoResponse;
-import com.web.milhas.service.impl.CartaoServiceImpl;
+import com.web.milhas.service.CartaoService; // <-- CORREÇÃO: Importa a interface
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,14 +18,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartaoController {
 
-    private final CartaoServiceImpl cartaoServiceImpl;
+    private final CartaoService cartaoService;
 
     @PostMapping
     public ResponseEntity<CartaoResponse> criar(
             @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody CartaoRequest dto) {
 
-        CartaoResponse response = cartaoServiceImpl.criarCartao(dto, userDetails.getUsername());
+        CartaoResponse response = cartaoService.criarCartao(dto, userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -33,7 +33,7 @@ public class CartaoController {
     public ResponseEntity<List<CartaoResponse>> listar(
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        return ResponseEntity.ok(cartaoServiceImpl.listarCartoes(userDetails.getUsername()));
+        return ResponseEntity.ok(cartaoService.listarCartoes(userDetails.getUsername()));
     }
 
     @DeleteMapping("/{id}")
@@ -41,7 +41,7 @@ public class CartaoController {
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long id) {
 
-        cartaoServiceImpl.excluirCartao(id, userDetails.getUsername());
+        cartaoService.excluirCartao(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

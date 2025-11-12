@@ -2,7 +2,7 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.promocao.PromocaoRequest;
 import com.web.milhas.dto.promocao.PromocaoResponse;
-import com.web.milhas.service.impl.PromocaoServiceImpl;
+import com.web.milhas.service.PromocaoService; // <-- CORREÇÃO: Importa a interface
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PromocaoController {
 
-    private final PromocaoServiceImpl promocaoServiceImpl;
+    private final PromocaoService promocaoService;
 
     @GetMapping
     public ResponseEntity<List<PromocaoResponse>> listar() {
-        return ResponseEntity.ok(promocaoServiceImpl.listarAtivas());
+        return ResponseEntity.ok(promocaoService.listarAtivas());
     }
 
     @PostMapping
     public ResponseEntity<PromocaoResponse> salvar(@Valid @RequestBody PromocaoRequest dto){
-        return ResponseEntity.ok(promocaoServiceImpl.criarPromocao(dto));
+        return ResponseEntity.ok(promocaoService.criarPromocao(dto));
     }
 }

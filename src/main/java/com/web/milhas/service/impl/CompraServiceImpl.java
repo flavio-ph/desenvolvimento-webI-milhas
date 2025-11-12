@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +57,18 @@ public class CompraServiceImpl implements CompraService {
     }
 
     private CompraResponse mapToDTO(CompraEntity entity) {
+        Integer diasParaCredito = null; // Valor padrão
+
+        if (entity.getStatus() == StatusCompra.PENDENTE) {
+            LocalDate hoje = LocalDate.now();
+            LocalDate dataPrevista = entity.getDataCreditoPrevista();
+
+            if (dataPrevista != null) {
+                long dias = ChronoUnit.DAYS.between(hoje, dataPrevista);
+                diasParaCredito = (int) Math.max(0, dias);
+            }
+        }
+
         return new CompraResponse(
                 entity.getId(),
                 entity.getDescricao(),
@@ -65,7 +78,8 @@ public class CompraServiceImpl implements CompraService {
                 entity.getDataCreditoPrevista(),
                 entity.getStatus(),
                 entity.getCartao().getId(),
-                entity.getCartao().getNomePersonalizado()
+                entity.getCartao().getNomePersonalizado(),
+                diasParaCredito
         );
     }
 }
