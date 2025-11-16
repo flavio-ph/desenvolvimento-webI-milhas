@@ -2,7 +2,7 @@ package com.web.milhas.service.impl;
 
 import com.web.milhas.dto.promocao.PromocaoRequest;
 import com.web.milhas.dto.promocao.PromocaoResponse;
-import com.web.milhas.entity.ProgamaPontosEntity;
+import com.web.milhas.entity.ProgramaPontosEntity;
 import com.web.milhas.entity.PromocaoEntity;
 import com.web.milhas.entity.enums.TipoNotificacao;
 import com.web.milhas.exception.ResourceNotFoundException;
@@ -35,7 +35,7 @@ public class PromocaoServiceImpl implements PromocaoService {
     @Override
     @Transactional
     public PromocaoResponse criarPromocao(PromocaoRequest dto) {
-        ProgamaPontosEntity programa = programaPontosRepository.findById(dto.programaPontosId())
+        ProgramaPontosEntity programa = programaPontosRepository.findById(dto.programaPontosId())
                 .orElseThrow(() -> new ResourceNotFoundException("Programa de pontos não encontrado."));
 
         PromocaoEntity promocao = new PromocaoEntity();

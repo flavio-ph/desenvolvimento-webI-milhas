@@ -1,7 +1,7 @@
 package com.web.milhas.service.impl;
 
 import com.web.milhas.dto.programapontos.ProgramaPontosDTO;
-import com.web.milhas.entity.ProgamaPontosEntity;
+import com.web.milhas.entity.ProgramaPontosEntity;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.ProgramaPontosRepository;
 import com.web.milhas.service.ProgramaPontosService;
@@ -27,13 +27,13 @@ public class ProgramaPontosServiceImpl implements ProgramaPontosService {
     @Override
     @Transactional
     public ProgramaPontosDTO salvar(ProgramaPontosDTO dto) {
-        ProgamaPontosEntity entity = new ProgamaPontosEntity();
+        ProgramaPontosEntity entity = new ProgramaPontosEntity();
         if (dto.id() != null) {
             entity = programaPontosRepository.findById(dto.id())
                     .orElseThrow(() -> new ResourceNotFoundException("Programa de pontos não encontrado."));
         }
         entity.setNome(dto.nome());
-        ProgamaPontosEntity salvo = programaPontosRepository.save(entity);
+        ProgramaPontosEntity salvo = programaPontosRepository.save(entity);
         return new ProgramaPontosDTO(salvo.getId(), salvo.getNome());
     }
 

@@ -5,6 +5,7 @@ import com.web.milhas.dto.auth.UpdatePasswordRequest;
 import com.web.milhas.dto.usuario.UsuarioResponse;
 import com.web.milhas.dto.usuario.UsuarioUpdateRequest;
 import com.web.milhas.entity.UsuarioEntity;
+import com.web.milhas.entity.enums.UserRole;
 import com.web.milhas.exception.EmailAlreadyExistsException;
 import com.web.milhas.exception.InvalidPasswordException;
 import com.web.milhas.exception.InvalidTokenException;
@@ -39,6 +40,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
+        usuario.setRole(UserRole.USER);
         usuarioRepository.save(usuario);
     }
 

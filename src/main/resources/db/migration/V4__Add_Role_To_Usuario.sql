@@ -1,0 +1,4 @@
+SET search_path TO milhas;
+
+ALTER TABLE usuario
+ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'USER';

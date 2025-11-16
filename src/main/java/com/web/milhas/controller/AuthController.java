@@ -41,7 +41,7 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registrar(@Valid @RequestBody RegisterRequest req) {
-        usuarioService.registrarUsuario(req); // <-- Funciona igual
+        usuarioService.registrarUsuario(req);
     }
 
     @PostMapping("/forgot-password")

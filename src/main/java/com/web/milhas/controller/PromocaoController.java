@@ -6,6 +6,7 @@ import com.web.milhas.service.PromocaoService; // <-- CORREÇÃO: Importa a inte
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class PromocaoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PromocaoResponse> salvar(@Valid @RequestBody PromocaoRequest dto){
         return ResponseEntity.ok(promocaoService.criarPromocao(dto));
     }

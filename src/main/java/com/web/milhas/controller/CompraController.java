@@ -18,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CompraController {
 
-    private final CompraService compraService; // <-- CORREÇÃO: Injeta a interface
-    private final FileUploadService fileUploadService; // <-- CORREÇÃO: Injeta a interface
+    private final CompraService compraService;
+    private final FileUploadService fileUploadService;
 
     @PostMapping
     public ResponseEntity<CompraResponse> registrarCompra(

@@ -1,5 +1,6 @@
 package com.web.milhas.entity;
 
+import com.web.milhas.entity.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -43,6 +44,10 @@ public class UsuarioEntity implements UserDetails {
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetPasswordTokenExpiry;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+
     @OneToMany(mappedBy = "usuario")
     private Set<CartaoEntity> cartoes;
 
@@ -51,6 +56,14 @@ public class UsuarioEntity implements UserDetails {
 
     @OneToMany(mappedBy = "usuario")
     private Set<NotificacaoEntity> notificacoes;
+
+    public Collection<? extends GrantedAuthority> grantedAuthorities() {
+        if (this.role == UserRole.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("USER"));
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

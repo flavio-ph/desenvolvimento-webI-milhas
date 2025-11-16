@@ -36,5 +36,5 @@ public class PromocaoEntity {
 
     @ManyToOne
     @JoinColumn(name = "programa_pontos_id", nullable = false)
-    private ProgamaPontosEntity programaPontos;
+    private ProgramaPontosEntity programaPontos;
 }

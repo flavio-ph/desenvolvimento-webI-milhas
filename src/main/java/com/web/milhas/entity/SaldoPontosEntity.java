@@ -32,7 +32,7 @@ public class SaldoPontosEntity {
 
     @ManyToOne
     @JoinColumn(name = "programa_pontos_id", nullable = false)
-    private ProgamaPontosEntity programaPontos;
+    private ProgramaPontosEntity programaPontos;
 
     @OneToMany(mappedBy = "saldoPontos")
     private Set<MovimentacaoPontosEntity> movimentacoes;

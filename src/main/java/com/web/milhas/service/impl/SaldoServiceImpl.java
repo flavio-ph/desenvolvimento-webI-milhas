@@ -2,7 +2,7 @@ package com.web.milhas.service.impl;
 
 import com.web.milhas.dto.saldo.SaldoPontosResponse;
 import com.web.milhas.entity.CompraEntity;
-import com.web.milhas.entity.ProgamaPontosEntity;
+import com.web.milhas.entity.ProgramaPontosEntity;
 import com.web.milhas.entity.SaldoPontosEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.TipoMovimentacao;
@@ -43,7 +43,7 @@ public class SaldoServiceImpl implements SaldoService {
         }
 
         UsuarioEntity usuario = compra.getCartao().getUsuario();
-        ProgamaPontosEntity programa = compra.getCartao().getProgramaPontos();
+        ProgramaPontosEntity programa = compra.getCartao().getProgramaPontos();
 
         SaldoPontosEntity saldo = saldoPontosRepository.findByUsuarioIdAndProgramaPontosId(usuario.getId(), programa.getId())
                 .orElseGet(() -> criarNovoSaldo(usuario, programa));
@@ -60,7 +60,7 @@ public class SaldoServiceImpl implements SaldoService {
         );
     }
 
-    private SaldoPontosEntity criarNovoSaldo(UsuarioEntity usuario, ProgamaPontosEntity programa) {
+    private SaldoPontosEntity criarNovoSaldo(UsuarioEntity usuario, ProgramaPontosEntity programa) {
         SaldoPontosEntity novoSaldo = new SaldoPontosEntity();
         novoSaldo.setUsuario(usuario);
         novoSaldo.setProgramaPontos(programa);

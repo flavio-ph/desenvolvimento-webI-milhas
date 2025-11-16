@@ -42,7 +42,7 @@ public class CartaoEntity {
 
     @ManyToOne
     @JoinColumn(name = "programa_pontos_id", nullable = false)
-    private ProgamaPontosEntity programaPontos;
+    private ProgramaPontosEntity programaPontos;
 
     @OneToMany(mappedBy = "cartao")
     private Set<CompraEntity> compras;

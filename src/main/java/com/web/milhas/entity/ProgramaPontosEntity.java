@@ -15,14 +15,14 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class ProgamaPontosEntity { // Nome da classe mantido igual ao nome do arquivo
+public class ProgramaPontosEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String nome; // Ex: Smiles, TudoAzul, Latam Pass
+    private String nome;
 
     @OneToMany(mappedBy = "programaPontos")
     private Set<SaldoPontosEntity> saldos;

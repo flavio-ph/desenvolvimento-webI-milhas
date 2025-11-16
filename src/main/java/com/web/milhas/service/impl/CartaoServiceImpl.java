@@ -4,7 +4,7 @@ import com.web.milhas.dto.cartao.CartaoRequest;
 import com.web.milhas.dto.cartao.CartaoResponse;
 import com.web.milhas.entity.BandeiraEntity;
 import com.web.milhas.entity.CartaoEntity;
-import com.web.milhas.entity.ProgamaPontosEntity;
+import com.web.milhas.entity.ProgramaPontosEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.BandeiraRepository;
@@ -34,7 +34,7 @@ public class CartaoServiceImpl implements CartaoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
         BandeiraEntity bandeira = bandeiraRepository.findById(dto.bandeiraId())
                 .orElseThrow(() -> new ResourceNotFoundException("Bandeira não encontrada."));
-        ProgamaPontosEntity programa = programaPontosRepository.findById(dto.programaPontosId())
+        ProgramaPontosEntity programa = programaPontosRepository.findById(dto.programaPontosId())
                 .orElseThrow(() -> new ResourceNotFoundException("Programa de pontos não encontrado."));
 
         CartaoEntity cartao = new CartaoEntity();
