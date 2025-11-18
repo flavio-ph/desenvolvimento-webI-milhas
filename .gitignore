@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Arquivo de segredos - NUNCA ENVIAR
+.env
+
+HELP.md
+target/
+# ... (resto do arquivo)
