@@ -41,12 +41,18 @@ public class CompraServiceImpl implements CompraService {
         }
 
         BigDecimal pontosCalculados = dto.valorGasto().multiply(cartao.getFatorConversao());
-        LocalDate dataCreditoPrevista = dto.dataCompra().plusDays(PRAZO_CREDITO_DIAS);
+
+        // --- MUDANÇA AQUI: Captura automática da data atual ---
+        LocalDate dataAtual = LocalDate.now();
+        LocalDate dataCreditoPrevista = dataAtual.plusDays(PRAZO_CREDITO_DIAS);
 
         CompraEntity compra = new CompraEntity();
         compra.setDescricao(dto.descricao());
         compra.setValorGasto(dto.valorGasto());
-        compra.setDataCompra(dto.dataCompra());
+
+        // Define a data capturada automaticamente
+        compra.setDataCompra(dataAtual);
+
         compra.setCartao(cartao);
         compra.setPontosCalculados(pontosCalculados);
         compra.setDataCreditoPrevista(dataCreditoPrevista);
@@ -57,7 +63,7 @@ public class CompraServiceImpl implements CompraService {
     }
 
     private CompraResponse mapToDTO(CompraEntity entity) {
-        Integer diasParaCredito = null; // Valor padrão
+        Integer diasParaCredito = null;
 
         if (entity.getStatus() == StatusCompra.PENDENTE) {
             LocalDate hoje = LocalDate.now();

@@ -16,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -45,10 +47,9 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody PasswordResetRequest req) {
-        usuarioService.requestPasswordReset(req.email());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody PasswordResetRequest req) {
+        String token = usuarioService.requestPasswordReset(req.email());
+        return ResponseEntity.ok(Map.of("resetToken", token));
     }
 
     @PostMapping("/reset-password")

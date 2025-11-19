@@ -36,11 +36,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioRepository.findEntityByEmail(dto.email()).isPresent()) {
             throw new EmailAlreadyExistsException("O e-mail fornecido já está em uso.");
         }
+
         UsuarioEntity usuario = new UsuarioEntity();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
-        usuario.setRole(UserRole.USER);
+
+        if (dto.role() != null) {
+            usuario.setRole(dto.role());
+        } else {
+            usuario.setRole(UserRole.USER);
+        }
+
         usuarioRepository.save(usuario);
     }
 
@@ -61,13 +68,17 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public void requestPasswordReset(String email) {
+    public String requestPasswordReset(String email) {
         UsuarioEntity usuario = findUsuarioByEmail(email);
+
         String token = UUID.randomUUID().toString();
         usuario.setResetPasswordToken(token);
         usuario.setResetPasswordTokenExpiry(LocalDateTime.now().plusHours(1));
         usuarioRepository.save(usuario);
+
         log.info("Token de reset gerado para {}: {}", email, token);
+
+        return token;
     }
 
     @Override

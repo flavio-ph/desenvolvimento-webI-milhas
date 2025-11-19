@@ -9,6 +9,9 @@ public interface UsuarioService {
     void registrarUsuario(RegisterRequest dto);
     UsuarioResponse updateProfile(String userEmail, UsuarioUpdateRequest dto);
     UsuarioResponse getProfile(String userEmail);
-    void requestPasswordReset(String email);
+
+    // Alterado de void para String
+    String requestPasswordReset(String email);
+
     void resetPassword(UpdatePasswordRequest dto);
 }
