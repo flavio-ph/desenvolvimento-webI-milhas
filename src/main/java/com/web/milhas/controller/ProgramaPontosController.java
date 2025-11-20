@@ -29,7 +29,7 @@ public class ProgramaPontosController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+   //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProgramaPontosDTO> atualizarPrograma(@PathVariable Long id, @Valid @RequestBody ProgramaPontosDTO dto) {
         ProgramaPontosDTO dtoAtualizado = new ProgramaPontosDTO(id, dto.nome());
         return ResponseEntity.ok(programaPontosService.salvar(dtoAtualizado));

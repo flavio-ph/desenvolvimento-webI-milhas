@@ -23,12 +23,13 @@ public class BandeiraController {
     }
 
     @PostMapping
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BandeiraDTO> criarBandeira(@Valid @RequestBody BandeiraDTO dto) {
         return ResponseEntity.ok(bandeiraService.salvar(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BandeiraDTO> atualizarBandeira(@PathVariable Long id, @Valid @RequestBody BandeiraDTO dto) {
         BandeiraDTO dtoAtualizado = new BandeiraDTO(id, dto.nome());
         return ResponseEntity.ok(bandeiraService.salvar(dtoAtualizado));
