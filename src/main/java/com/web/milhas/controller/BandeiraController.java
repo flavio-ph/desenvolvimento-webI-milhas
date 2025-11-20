@@ -23,7 +23,6 @@ public class BandeiraController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BandeiraDTO> criarBandeira(@Valid @RequestBody BandeiraDTO dto) {
         return ResponseEntity.ok(bandeiraService.salvar(dto));
     }

@@ -42,7 +42,6 @@ public class CompraServiceImpl implements CompraService {
 
         BigDecimal pontosCalculados = dto.valorGasto().multiply(cartao.getFatorConversao());
 
-        // --- MUDANÇA AQUI: Captura automática da data atual ---
         LocalDate dataAtual = LocalDate.now();
         LocalDate dataCreditoPrevista = dataAtual.plusDays(PRAZO_CREDITO_DIAS);
 
@@ -50,7 +49,6 @@ public class CompraServiceImpl implements CompraService {
         compra.setDescricao(dto.descricao());
         compra.setValorGasto(dto.valorGasto());
 
-        // Define a data capturada automaticamente
         compra.setDataCompra(dataAtual);
 
         compra.setCartao(cartao);

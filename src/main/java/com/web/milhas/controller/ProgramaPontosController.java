@@ -23,7 +23,7 @@ public class ProgramaPontosController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProgramaPontosDTO> criarPrograma(@Valid @RequestBody ProgramaPontosDTO dto) {
         return ResponseEntity.ok(programaPontosService.salvar(dto));
     }
