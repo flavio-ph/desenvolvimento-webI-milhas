@@ -8,8 +8,8 @@ import com.web.milhas.entity.enums.TipoNotificacao;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.ProgramaPontosRepository;
 import com.web.milhas.repository.PromocaoRepository;
-import com.web.milhas.service.NotificacaoService; // Importa a INTERFACE
-import com.web.milhas.service.PromocaoService; // Importa a INTERFACE
+import com.web.milhas.service.NotificacaoService; 
+import com.web.milhas.service.PromocaoService; 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

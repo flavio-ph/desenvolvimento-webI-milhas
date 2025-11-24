@@ -2,7 +2,7 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.cartao.CartaoRequest;
 import com.web.milhas.dto.cartao.CartaoResponse;
-import com.web.milhas.service.CartaoService; // <-- CORREÇÃO: Importa a interface
+import com.web.milhas.service.CartaoService; 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

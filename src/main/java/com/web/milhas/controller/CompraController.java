@@ -2,8 +2,8 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.compra.CompraRequest;
 import com.web.milhas.dto.compra.CompraResponse;
-import com.web.milhas.service.CompraService; // <-- CORREÇÃO: Importa a interface
-import com.web.milhas.service.FileUploadService; // <-- CORREÇÃO: Importa a interface
+import com.web.milhas.service.CompraService; 
+import com.web.milhas.service.FileUploadService; 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

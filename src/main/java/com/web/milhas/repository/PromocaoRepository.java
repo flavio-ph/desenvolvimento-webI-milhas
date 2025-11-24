@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface PromocaoRepository extends JpaRepository<PromocaoEntity, Long> {
 
-    // Busca promoções ativas (dataFim >= hoje) para um programa específico
     List<PromocaoEntity> findByProgramaPontosIdAndDataFimGreaterThanEqual(Long programaPontosId, LocalDate hoje);
 }

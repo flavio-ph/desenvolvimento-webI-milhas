@@ -38,15 +38,13 @@ public class RelatorioServiceImpl implements RelatorioService {
              OutputStreamWriter osw = new OutputStreamWriter(baos);
              CSVWriter writer = new CSVWriter(osw)) {
 
-            // Cabeçalho (Incluindo "Programa")
             writer.writeNext(new String[]{"Data", "Tipo", "Programa", "Pontos", "Descrição"});
 
-            // Dados
             for (MovimentacaoPontosResponse mov : movimentacoes) {
                 writer.writeNext(new String[]{
                         mov.dataMovimentacao().format(DATE_FORMATTER),
                         mov.tipo().name(),
-                        mov.nomePrograma(), // <-- Campo do DTO atualizado
+                        mov.nomePrograma(),
                         mov.quantidadePontos().toString(),
                         mov.descricao()
                 });
@@ -79,22 +77,21 @@ public class RelatorioServiceImpl implements RelatorioService {
             document.add(new Paragraph("Gerado em: " + java.time.LocalDateTime.now().format(DATE_FORMATTER)));
             document.add(Chunk.NEWLINE);
 
-            PdfPTable table = new PdfPTable(5); // 5 colunas
+            PdfPTable table = new PdfPTable(5); 
             table.setWidthPercentage(100);
             table.setWidths(new float[]{3, 2, 3, 2, 4});
 
-            // Cabeçalho da Tabela
+
             adicionarCabecalhoTabela(table, "Data");
             adicionarCabecalhoTabela(table, "Tipo");
-            adicionarCabecalhoTabela(table, "Programa"); // <-- Campo do DTO atualizado
+            adicionarCabecalhoTabela(table, "Programa"); 
             adicionarCabecalhoTabela(table, "Pontos");
             adicionarCabecalhoTabela(table, "Descrição");
 
-            // Dados da Tabela
             for (MovimentacaoPontosResponse mov : movimentacoes) {
                 table.addCell(mov.dataMovimentacao().format(DATE_FORMATTER));
                 table.addCell(mov.tipo().name());
-                table.addCell(mov.nomePrograma()); // <-- Campo do DTO atualizado
+                table.addCell(mov.nomePrograma()); 
                 table.addCell(mov.quantidadePontos().toString());
                 table.addCell(mov.descricao() != null ? mov.descricao() : "-");
             }

@@ -10,7 +10,7 @@ public interface UsuarioService {
     UsuarioResponse updateProfile(String userEmail, UsuarioUpdateRequest dto);
     UsuarioResponse getProfile(String userEmail);
 
-    // Alterado de void para String
+
     String requestPasswordReset(String email);
 
     void resetPassword(UpdatePasswordRequest dto);

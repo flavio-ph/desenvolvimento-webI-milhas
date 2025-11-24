@@ -1,7 +1,7 @@
 package com.web.milhas.controller;
 
 import com.web.milhas.dto.saldo.SaldoPontosResponse;
-import com.web.milhas.service.SaldoService; // <-- CORREÇÃO: Importa a interface
+import com.web.milhas.service.SaldoService; 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

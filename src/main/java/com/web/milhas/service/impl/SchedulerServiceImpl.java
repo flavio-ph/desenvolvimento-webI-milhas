@@ -4,9 +4,9 @@ import com.web.milhas.entity.CompraEntity;
 import com.web.milhas.entity.enums.StatusCompra;
 import com.web.milhas.entity.enums.TipoNotificacao;
 import com.web.milhas.repository.CompraRepository;
-import com.web.milhas.service.NotificacaoService; // Importa a INTERFACE
-import com.web.milhas.service.SaldoService;     // Importa a INTERFACE
-import com.web.milhas.service.SchedulerService;  // Importa a INTERFACE
+import com.web.milhas.service.NotificacaoService;
+import com.web.milhas.service.SaldoService;     
+import com.web.milhas.service.SchedulerService;  
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

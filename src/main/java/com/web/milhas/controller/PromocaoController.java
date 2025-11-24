@@ -2,7 +2,7 @@ package com.web.milhas.controller;
 
 import com.web.milhas.dto.promocao.PromocaoRequest;
 import com.web.milhas.dto.promocao.PromocaoResponse;
-import com.web.milhas.service.PromocaoService; // <-- CORREÇÃO: Importa a interface
+import com.web.milhas.service.PromocaoService; 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
