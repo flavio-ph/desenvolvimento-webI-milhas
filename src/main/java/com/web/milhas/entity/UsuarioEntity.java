@@ -38,6 +38,12 @@ public class UsuarioEntity implements UserDetails {
     @Column(nullable = false)
     private String senha;
 
+    @Column
+    private String telefone;
+
+    @Column
+    private String cpf;
+
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 

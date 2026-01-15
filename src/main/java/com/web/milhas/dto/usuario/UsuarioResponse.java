@@ -1,9 +1,12 @@
 package com.web.milhas.dto.usuario;
 
-import java.time.LocalDateTime;
+import com.web.milhas.entity.enums.UserRole;
 
 public record UsuarioResponse(
-    Long id,
-    String nome,
-    String email
+    Long id, 
+    String nome, 
+    String email, 
+    String telefone, 
+    String cpf,      
+    UserRole role    
 ) {}

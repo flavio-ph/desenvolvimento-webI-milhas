@@ -17,5 +17,8 @@ public record RegisterRequest(
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     String senha,
 
+    String telefone,
+    String cpf,
+
     UserRole role
 ) {}
