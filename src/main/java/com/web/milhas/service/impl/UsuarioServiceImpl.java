@@ -41,6 +41,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
+        
+        // Agora salvamos telefone e CPF (mesmo que sejam null/opcionais)
+        usuario.setTelefone(dto.telefone());
+        usuario.setCpf(dto.cpf());
 
         if (dto.role() != null) {
             usuario.setRole(dto.role());
@@ -55,15 +59,39 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioResponse updateProfile(String userEmail, UsuarioUpdateRequest dto) {
         UsuarioEntity usuario = findUsuarioByEmail(userEmail);
-        usuario.setNome(dto.nome());
+        
+        // Atualiza Nome
+        if (dto.nome() != null) usuario.setNome(dto.nome());
+        
+        // Atualiza Telefone e CPF (verificando se vieram na requisição)
+        if (dto.telefone() != null) usuario.setTelefone(dto.telefone());
+        if (dto.cpf() != null) usuario.setCpf(dto.cpf());
+        
+        // Atualiza Senha (se fornecida e não vazia)
+        if (dto.senha() != null && !dto.senha().isBlank()) {
+             usuario.setSenha(passwordEncoder.encode(dto.senha()));
+        }
+
         UsuarioEntity updatedUsuario = usuarioRepository.save(usuario);
-        return new UsuarioResponse(updatedUsuario.getId(), updatedUsuario.getNome(), updatedUsuario.getEmail());
+        return toResponse(updatedUsuario);
     }
 
     @Override
     public UsuarioResponse getProfile(String userEmail) {
         UsuarioEntity usuario = findUsuarioByEmail(userEmail);
-        return new UsuarioResponse(usuario.getId(), usuario.getNome(), usuario.getEmail());
+        return toResponse(usuario);
+    }
+
+    // Método auxiliar para criar a resposta com todos os 6 campos
+    private UsuarioResponse toResponse(UsuarioEntity user) {
+        return new UsuarioResponse(
+            user.getId(), 
+            user.getNome(), 
+            user.getEmail(), 
+            user.getTelefone(), 
+            user.getCpf(), 
+            user.getRole()
+        );
     }
 
     @Override
