@@ -1,0 +1,10 @@
+INSERT INTO programa_pontos (nome) VALUES ('Livelo');
+INSERT INTO programa_pontos (nome) VALUES ('Esfera');
+INSERT INTO programa_pontos (nome) VALUES ('Smiles');
+INSERT INTO programa_pontos (nome) VALUES ('Latam Pass');
+INSERT INTO programa_pontos (nome) VALUES ('TudoAzul');
+INSERT INTO programa_pontos (nome) VALUES ('Átomos');
+INSERT INTO programa_pontos (nome) VALUES ('Dotz');
+INSERT INTO programa_pontos (nome) VALUES ('Iupp');
+INSERT INTO programa_pontos (nome) VALUES ('TAP Miles&Go');
+INSERT INTO programa_pontos (nome) VALUES ('AAdvantage');
