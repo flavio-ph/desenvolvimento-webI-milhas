@@ -9,5 +9,6 @@ public record PromocaoResponse(
         String urlPromocao,
         LocalDate dataInicio,
         LocalDate dataFim,
-        String nomeProgramaPontos
+        String nomeProgramaPontos,
+        String status
 ) {}
