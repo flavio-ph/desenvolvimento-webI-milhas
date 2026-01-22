@@ -44,6 +44,9 @@ public class UsuarioEntity implements UserDetails {
     @Column
     private String cpf;
 
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 

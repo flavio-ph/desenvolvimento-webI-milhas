@@ -42,7 +42,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setEmail(dto.email());
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
         
-        // Agora salvamos telefone e CPF (mesmo que sejam null/opcionais)
         usuario.setTelefone(dto.telefone());
         usuario.setCpf(dto.cpf());
 
@@ -60,16 +59,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponse updateProfile(String userEmail, UsuarioUpdateRequest dto) {
         UsuarioEntity usuario = findUsuarioByEmail(userEmail);
         
-        // Atualiza Nome
         if (dto.nome() != null) usuario.setNome(dto.nome());
         
-        // Atualiza Telefone e CPF (verificando se vieram na requisição)
         if (dto.telefone() != null) usuario.setTelefone(dto.telefone());
         if (dto.cpf() != null) usuario.setCpf(dto.cpf());
         
-        // Atualiza Senha (se fornecida e não vazia)
         if (dto.senha() != null && !dto.senha().isBlank()) {
              usuario.setSenha(passwordEncoder.encode(dto.senha()));
+        }
+        if (dto.fotoPerfil() != null && !dto.fotoPerfil().isBlank()) {
+            usuario.setFotoPerfil(dto.fotoPerfil());
         }
 
         UsuarioEntity updatedUsuario = usuarioRepository.save(usuario);
@@ -82,7 +81,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         return toResponse(usuario);
     }
 
-    // Método auxiliar para criar a resposta com todos os 6 campos
     private UsuarioResponse toResponse(UsuarioEntity user) {
         return new UsuarioResponse(
             user.getId(), 
@@ -90,7 +88,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             user.getEmail(), 
             user.getTelefone(), 
             user.getCpf(), 
-            user.getRole()
+            user.getRole(),
+                user.getFotoPerfil()
         );
     }
 
@@ -131,4 +130,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findEntityByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
     }
+
+
 }

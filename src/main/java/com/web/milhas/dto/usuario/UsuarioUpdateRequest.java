@@ -11,5 +11,6 @@ public record UsuarioUpdateRequest(
         String senha,
 
         String telefone,
-        String cpf
+        String cpf,
+        String fotoPerfil
 ) { }
