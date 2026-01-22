@@ -14,4 +14,7 @@ public interface UsuarioService {
     String requestPasswordReset(String email);
 
     void resetPassword(UpdatePasswordRequest dto);
+
+    String generateTwoFactorSetup(String email);
+    boolean verifyTwoFactor(String email, int code);
 }
