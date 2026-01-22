@@ -44,6 +44,15 @@ public class UsuarioEntity implements UserDetails {
     @Column
     private String cpf;
 
+    @Column(name = "two_factor_enabled")
+    private boolean twoFactorEnabled = false;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "verification_code_expiry")
+    private java.time.LocalDateTime verificationCodeExpiry;
+
     @Column(name = "foto_perfil")
     private String fotoPerfil;
 

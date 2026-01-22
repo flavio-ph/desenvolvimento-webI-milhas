@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -129,6 +130,51 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioEntity findUsuarioByEmail(String email) {
         return usuarioRepository.findEntityByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public String generateTwoFactorSetup(String email) {
+        UsuarioEntity usuario = findUsuarioByEmail(email);
+        
+        // 1. Gera um código aleatório de 6 dígitos (ex: 482910)
+        String code = String.valueOf(new Random().nextInt(900000) + 100000);
+        
+        // 2. Salva no banco com validade de 5 minutos
+        usuario.setVerificationCode(code);
+        usuario.setVerificationCodeExpiry(LocalDateTime.now().plusMinutes(5));
+        usuarioRepository.save(usuario);
+        
+        // 3. Retorna o código para o Controller usar
+        return code; 
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public boolean verifyTwoFactor(String email, int codeInput) {
+        UsuarioEntity usuario = findUsuarioByEmail(email);
+        String codeStr = String.valueOf(codeInput);
+
+        // Verifica se existe código gerado
+        if (usuario.getVerificationCode() == null || usuario.getVerificationCodeExpiry() == null) {
+            return false;
+        }
+
+        // Verifica se o código expirou
+        if (LocalDateTime.now().isAfter(usuario.getVerificationCodeExpiry())) {
+            return false;
+        }
+
+        // Verifica se o código bate
+        if (usuario.getVerificationCode().equals(codeStr)) {
+            // Sucesso: Ativa o 2FA e limpa o código temporário
+            usuario.setTwoFactorEnabled(true);
+            usuario.setVerificationCode(null); 
+            usuarioRepository.save(usuario);
+            return true;
+        }
+        
+        return false;
     }
 
 
