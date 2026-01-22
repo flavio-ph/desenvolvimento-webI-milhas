@@ -32,14 +32,4 @@ public class UsuarioController {
         String userEmail = userDetails.getUsername();
         return ResponseEntity.ok(usuarioService.updateProfile(userEmail, dto));
     }
-
-    @PutMapping("/me")
-    public ResponseEntity<UsuarioResponse> updateProfile(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UsuarioUpdateRequest request) {
-
-        UsuarioResponse response = usuarioService.updateProfile(userDetails.getUsername(), request);
-
-        return ResponseEntity.ok(response);
-    }
 }
