@@ -6,6 +6,7 @@ public enum TipoMovimentacao {
     USO,
     EXPIRACAO,
     AJUSTE,
+    BONUS,
     TRANSFERENCIA
 
 }
