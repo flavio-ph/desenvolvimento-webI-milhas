@@ -1,0 +1,2 @@
+ALTER TABLE milhas.cartao
+ADD COLUMN cor VARCHAR(7);

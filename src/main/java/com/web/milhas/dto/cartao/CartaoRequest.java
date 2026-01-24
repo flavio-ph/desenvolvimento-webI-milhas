@@ -20,5 +20,7 @@ public record CartaoRequest(
     Long bandeiraId,
 
     @NotNull(message = "O ID do programa de pontos é obrigatório")
-    Long programaPontosId
+    Long programaPontosId,
+
+    String cor
 ) {}

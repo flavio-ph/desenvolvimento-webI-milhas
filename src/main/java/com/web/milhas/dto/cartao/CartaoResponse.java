@@ -8,5 +8,6 @@ public record CartaoResponse(
     String ultimosDigitos,
     BigDecimal fatorConversao,
     String nomeBandeira,
-    String nomeProgramaPontos
+    String nomeProgramaPontos,
+    String cor
 ) {}

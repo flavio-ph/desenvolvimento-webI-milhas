@@ -32,6 +32,9 @@ public class CartaoEntity {
     @Column(precision = 10, scale = 2)
     private BigDecimal fatorConversao;
 
+    @Column(length = 7)
+    private String cor;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;

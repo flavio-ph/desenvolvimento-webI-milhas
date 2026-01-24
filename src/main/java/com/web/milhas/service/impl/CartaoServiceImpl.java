@@ -44,6 +44,7 @@ public class CartaoServiceImpl implements CartaoService {
         cartao.setFatorConversao(dto.fatorConversao());
         cartao.setBandeira(bandeira);
         cartao.setProgramaPontos(programa);
+        cartao.setCor(dto.cor());
 
         CartaoEntity salvo = cartaoRepository.save(cartao);
         return mapToDTO(salvo);
@@ -79,7 +80,9 @@ public class CartaoServiceImpl implements CartaoService {
                 entity.getUltimosDigitos(),
                 entity.getFatorConversao(),
                 entity.getBandeira().getNome(),
-                entity.getProgramaPontos().getNome()
+                entity.getProgramaPontos().getNome(),
+                entity.getCor()
+
         );
     }
 }
