@@ -69,4 +69,13 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/me/upload-foto")
+    public ResponseEntity<Void> uploadFoto(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam("foto") org.springframework.web.multipart.MultipartFile foto) {
+        
+        usuarioService.uploadFotoPerfil(userDetails.getUsername(), foto);
+        return ResponseEntity.ok().build();
+    }
+
 }

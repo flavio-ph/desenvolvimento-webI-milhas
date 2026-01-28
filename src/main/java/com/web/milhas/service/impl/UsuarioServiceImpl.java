@@ -18,6 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,6 +36,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private static final Logger log = LoggerFactory.getLogger(UsuarioServiceImpl.class);
+    private Path storageLocation;
 
     @Override
     @Transactional
@@ -175,6 +182,28 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         
         return false;
+    }
+
+    @Override
+    @Transactional
+    public void uploadFotoPerfil(String email, org.springframework.web.multipart.MultipartFile arquivo) {
+        UsuarioEntity usuario = findUsuarioByEmail(email);
+
+        String nomeOriginal = org.springframework.util.StringUtils.cleanPath(arquivo.getOriginalFilename());
+        String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf('.'));
+        String nomeUnico = UUID.randomUUID().toString() + extensao;
+
+        try {
+            // storageLocation deve apontar para o diretório definido no application.properties
+            java.nio.file.Path targetLocation = java.nio.file.Paths.get("./uploads").toAbsolutePath().normalize().resolve(nomeUnico);
+            java.nio.file.Files.copy(arquivo.getInputStream(), targetLocation, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+            // Guarda apenas o nome do ficheiro no banco de dados
+            usuario.setFotoPerfil(nomeUnico);
+            usuarioRepository.save(usuario);
+        } catch (java.io.IOException ex) {
+            throw new RuntimeException("Erro ao salvar foto de perfil", ex);
+        }
     }
 
 

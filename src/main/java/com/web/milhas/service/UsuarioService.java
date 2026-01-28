@@ -1,5 +1,7 @@
 package com.web.milhas.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.web.milhas.dto.auth.RegisterRequest;
 import com.web.milhas.dto.auth.UpdatePasswordRequest;
 import com.web.milhas.dto.usuario.UsuarioResponse;
@@ -14,7 +16,7 @@ public interface UsuarioService {
     String requestPasswordReset(String email);
 
     void resetPassword(UpdatePasswordRequest dto);
-
+    void uploadFotoPerfil(String email, MultipartFile arquivo);
     String generateTwoFactorSetup(String email);
     boolean verifyTwoFactor(String email, int code);
 }
