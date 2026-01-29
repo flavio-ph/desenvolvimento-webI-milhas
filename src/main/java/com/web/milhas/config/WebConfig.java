@@ -17,7 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String path = Paths.get(uploadDir).toAbsolutePath().toUri().toString();
         
-        // Define que requisições para /uploads/ nome_da_foto buscarão o arquivo na pasta física
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations(path);
     }

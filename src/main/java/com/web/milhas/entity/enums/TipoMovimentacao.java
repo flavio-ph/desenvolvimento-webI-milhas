@@ -7,6 +7,6 @@ public enum TipoMovimentacao {
     EXPIRACAO,
     AJUSTE,
     BONUS,
-    TRANSFERENCIA
-
+    TRANSFERENCIA_ENTRADA,
+    TRANSFERENCIA_SAIDA
 }

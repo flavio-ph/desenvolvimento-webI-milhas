@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,6 +34,9 @@ public class MovimentacaoPontosEntity {
 
     @Column(nullable = false)
     private LocalDateTime dataMovimentacao;
+
+    @Column(name = "data_validade")
+    private LocalDate dataValidade;
 
     private String descricao;
 
