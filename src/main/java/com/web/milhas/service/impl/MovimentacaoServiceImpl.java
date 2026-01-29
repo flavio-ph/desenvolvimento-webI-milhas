@@ -8,6 +8,7 @@ import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.TipoMovimentacao;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.MovimentacaoPontosRepository;
+import com.web.milhas.repository.SaldoPontosRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.MovimentacaoService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import java.util.List;
 public class MovimentacaoServiceImpl implements MovimentacaoService {
 
     private final MovimentacaoPontosRepository movimentacaoRepository;
+    private final SaldoPontosRepository saldoPontosRepository;
     private final UsuarioRepository usuarioRepository;
 
     @Override
@@ -49,6 +52,45 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
                 .stream()
                 .map(this::mapToDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional 
+    public void gerarCreditoCompra(CompraEntity compra) {
+        
+        Long usuarioId = compra.getCartao().getUsuario().getId();
+        Long programaId = compra.getCartao().getProgramaPontos().getId();
+
+        SaldoPontosEntity saldo = saldoPontosRepository.findByUsuarioIdAndProgramaPontosId(usuarioId, programaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Saldo de pontos não encontrado para o usuário/programa."));
+
+        saldo.setTotalPontos(saldo.getTotalPontos().add(compra.getPontosCalculados()));
+        saldoPontosRepository.save(saldo); 
+
+        MovimentacaoPontosEntity mov = new MovimentacaoPontosEntity();
+        
+        mov.setTipo(TipoMovimentacao.ACUMULO); 
+        mov.setQuantidadePontos(compra.getPontosCalculados());
+        mov.setDataMovimentacao(LocalDateTime.now());
+        mov.setDescricao("Crédito referente à compra: " + compra.getDescricao());
+
+        mov.setDataValidade(LocalDate.now().plusMonths(24));
+
+        mov.setSaldoPontos(saldo); 
+        mov.setCompra(compra);     
+
+        movimentacaoRepository.save(mov);
+    }
+
+    @Override
+    public BigDecimal consultarPontosExpirando(String emailUsuario, int dias) {
+        var usuario = usuarioRepository.findEntityByEmail(emailUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        LocalDate hoje = LocalDate.now();
+        LocalDate dataLimite = hoje.plusDays(dias);
+
+        return movimentacaoRepository.somarPontosExpirando(usuario.getId(), hoje, dataLimite);
     }
 
     private MovimentacaoPontosResponse mapToDTO(MovimentacaoPontosEntity mov) {

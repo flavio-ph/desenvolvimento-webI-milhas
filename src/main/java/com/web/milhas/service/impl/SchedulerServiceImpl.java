@@ -1,79 +1,61 @@
+// Local: desenvolvimento-webI-milhas/src/main/java/com/web/milhas/service/impl/SchedulerServiceImpl.java
 package com.web.milhas.service.impl;
 
 import com.web.milhas.entity.CompraEntity;
 import com.web.milhas.entity.enums.StatusCompra;
 import com.web.milhas.entity.enums.TipoNotificacao;
 import com.web.milhas.repository.CompraRepository;
+import com.web.milhas.service.CompraService; 
 import com.web.milhas.service.NotificacaoService;
-import com.web.milhas.service.SaldoService;     
-import com.web.milhas.service.SchedulerService;  
+import com.web.milhas.service.SchedulerService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SchedulerServiceImpl implements SchedulerService {
 
     private final CompraRepository compraRepository;
+    private final CompraService compraService; 
     private final NotificacaoService notificacaoService;
-    private final SaldoService saldoService;
-
-    private static final Logger log = LoggerFactory.getLogger(SchedulerServiceImpl.class);
 
     @Override
-    @Scheduled(cron = "0 0 8 * * *")
-
-    @Transactional
+    @Scheduled(cron = "0 0 1 * * *") // Executa diariamente à 01:00 AM
     public void verificarComprasVencidas() {
-        log.info("Iniciando verificação agendada de compras vencidas...");
+        log.info("Iniciando processamento automático de créditos...");
 
         LocalDate hoje = LocalDate.now();
-        List<CompraEntity> comprasVencidas = compraRepository
-                .findByStatusAndDataCreditoPrevistaBefore(StatusCompra.PENDENTE, hoje);
+        // Busca compras PENDENTES com data prevista menor ou igual a hoje
+        List<CompraEntity> comprasParaCreditar = compraRepository
+                .findByStatusAndDataCreditoPrevistaLessThanEqual(StatusCompra.PENDENTE, hoje);
 
-        if (comprasVencidas.isEmpty()) {
-            log.info("Nenhuma compra pendente vencida encontrada.");
+        if (comprasParaCreditar.isEmpty()) {
+            log.info("Nenhuma compra pendente para processar.");
             return;
         }
 
-        log.info("Encontradas {} compras vencidas. Processando...", comprasVencidas.size());
+        for (CompraEntity compra : comprasParaCreditar) {
+            try {
+                // Chama o serviço central de crédito
+                compraService.creditarCompra(compra.getId());
 
-        for (CompraEntity compra : comprasVencidas) {
-            boolean simularSucesso = Math.random() > 0.2;
-
-            if (simularSucesso) {
-                compra.setStatus(StatusCompra.CREDITADO);
-
-                saldoService.creditarPontosCompra(compra);
-
+                // Envia a notificação real ao utilizador
                 notificacaoService.criarNotificacao(
                         compra.getCartao().getUsuario(),
-                        "Seus pontos da compra '" + compra.getDescricao() + "' foram creditados com sucesso!",
+                        "Os seus pontos da compra '" + compra.getDescricao() + "' foram creditados!",
                         TipoNotificacao.CREDITO_REALIZADO,
                         compra
                 );
-                log.info("Compra ID {} atualizada para CREDITADO.", compra.getId());
-            } else {
-                compra.setStatus(StatusCompra.EXPIRADO);
-                notificacaoService.criarNotificacao(
-                        compra.getCartao().getUsuario(),
-                        "ATENÇÃO: O prazo de crédito da compra '" + compra.getDescricao() + "' expirou. Verifique com a central.",
-                        TipoNotificacao.EXPIRACAO_PRAZO,
-                        compra
-                );
-                log.warn("Compra ID {} atualizada para EXPIRADO.", compra.getId());
+                log.info("Compra ID {} creditada com sucesso.", compra.getId());
+                
+            } catch (Exception e) {
+                log.error("Erro ao processar compra ID {}: {}", compra.getId(), e.getMessage());
             }
-
-            compraRepository.save(compra);
         }
-
-        log.info("Verificação agendada concluída.");
     }
 }

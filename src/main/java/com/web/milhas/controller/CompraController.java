@@ -50,4 +50,10 @@ public class CompraController {
         ResumoPendentesDTO resumo = compraService.calcularResumoPendentes(userDetails.getUsername());
         return ResponseEntity.ok(resumo);
     }
+
+    @PutMapping("/{id}/creditar")
+    public ResponseEntity<Void> creditar(@PathVariable Long id) {
+        compraService.creditarCompra(id);
+        return ResponseEntity.noContent().build();
+    }
 }
