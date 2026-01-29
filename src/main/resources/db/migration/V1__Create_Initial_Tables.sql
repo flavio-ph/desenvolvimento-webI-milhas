@@ -2,7 +2,9 @@ SET search_path TO milhas;
 
 CREATE TABLE bandeira (
     id BIGSERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL UNIQUE
+    nome VARCHAR(255) NOT NULL UNIQUE,
+    status VARCHAR(50) DEFAULT 'ACTIVE',
+    cor VARCHAR(50) DEFAULT 'bg-slate-900'
 );
 
 CREATE TABLE programa_pontos (

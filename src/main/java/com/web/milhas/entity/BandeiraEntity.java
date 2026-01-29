@@ -22,4 +22,10 @@ public class BandeiraEntity {
 
     @Column(nullable = false, unique = true)
     private String nome;
+
+    @Column(name = "status")
+    private String status = "ACTIVE";
+
+    @Column(name = "cor")
+    private String cor = "bg-slate-900";
 }

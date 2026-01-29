@@ -6,8 +6,10 @@ public record BandeiraDTO(
 
         Long id,
         @NotBlank(message = "O nome de bandeira é obrigatório")
-        String nome
-
+        String nome,
+        String status, 
+        String cor,
+        Long cards
 ) {
 
 }

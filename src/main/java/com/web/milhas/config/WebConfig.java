@@ -1,4 +1,3 @@
-// src/main/java/com/web/milhas/config/WebConfig.java
 package com.web.milhas.config;
 
 import org.springframework.beans.factory.annotation.Value;

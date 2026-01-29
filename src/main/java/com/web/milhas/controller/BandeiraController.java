@@ -22,6 +22,11 @@ public class BandeiraController {
         return ResponseEntity.ok(bandeiraService.listarTodas());
     }
 
+    @GetMapping("/ativas")
+    public ResponseEntity<List<BandeiraDTO>> listarBandeirasAtivas() {
+        return ResponseEntity.ok(bandeiraService.listarAtivas());
+    }
+
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BandeiraDTO> criarBandeira(@Valid @RequestBody BandeiraDTO dto) {
@@ -31,7 +36,13 @@ public class BandeiraController {
     @PutMapping("/{id}")
     //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BandeiraDTO> atualizarBandeira(@PathVariable Long id, @Valid @RequestBody BandeiraDTO dto) {
-        BandeiraDTO dtoAtualizado = new BandeiraDTO(id, dto.nome());
+        BandeiraDTO dtoAtualizado = new BandeiraDTO(
+            id, 
+            dto.nome(), 
+            dto.status(), 
+            dto.cor(),
+            0L
+        );
         return ResponseEntity.ok(bandeiraService.salvar(dtoAtualizado));
     }
 

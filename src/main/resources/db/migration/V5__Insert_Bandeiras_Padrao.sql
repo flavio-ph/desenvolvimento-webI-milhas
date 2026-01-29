@@ -1,5 +1,5 @@
-INSERT INTO milhas.bandeira (nome) VALUES ('Visa');
-INSERT INTO milhas.bandeira (nome) VALUES ('Mastercard');
-INSERT INTO milhas.bandeira (nome) VALUES ('Elo');
-INSERT INTO milhas.bandeira (nome) VALUES ('American Express');
-INSERT INTO milhas.bandeira (nome) VALUES ('Hipercard');
+INSERT INTO milhas.bandeira (nome, status, cor) VALUES ('Visa', 'ACTIVE', 'bg-indigo-600');
+INSERT INTO milhas.bandeira (nome, status, cor) VALUES ('Mastercard', 'ACTIVE', 'bg-slate-900');
+INSERT INTO milhas.bandeira (nome, status, cor) VALUES ('Elo', 'ACTIVE', 'bg-emerald-500');
+INSERT INTO milhas.bandeira (nome, status, cor) VALUES ('American Express', 'ACTIVE', 'bg-amber-500');
+INSERT INTO milhas.bandeira (nome, status, cor) VALUES ('Hipercard', 'ACTIVE', 'bg-rose-500');
