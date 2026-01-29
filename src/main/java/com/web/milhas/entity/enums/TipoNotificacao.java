@@ -2,8 +2,12 @@ package com.web.milhas.entity.enums;
 
 public enum TipoNotificacao {
 
-    EXPIRACAO_PRAZO,
-    PROMOCAO,
+    COMPRA,             
+    TRANSFERENCIA,   
+    PROMOCAO,           
+    EXPIRACAO,         
+    AVISO_EXPIRACAO,     
+    PONTOS_EXPIRADOS,    
     CREDITO_REALIZADO
 
 }

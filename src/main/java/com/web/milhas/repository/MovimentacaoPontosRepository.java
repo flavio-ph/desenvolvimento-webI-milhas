@@ -7,11 +7,13 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MovimentacaoPontosRepository extends JpaRepository<MovimentacaoPontosEntity, Long> {
 
     List<MovimentacaoPontosEntity> findBySaldoPontosUsuarioId(Long usuarioId);
+    List<MovimentacaoPontosEntity> findByDataMovimentacaoBetweenAndTipo(LocalDateTime inicio, LocalDateTime fim, String tipo); 
 
     @Query(value = "SELECT AVG( CAST(m.data_movimentacao AS date) - c.data_compra ) " +
             "FROM milhas.movimentacao_pontos m " +
@@ -29,4 +31,5 @@ public interface MovimentacaoPontosRepository extends JpaRepository<Movimentacao
     BigDecimal somarPontosExpirando(@Param("usuarioId") Long usuarioId, 
                                     @Param("hoje") LocalDate hoje, 
                                     @Param("limite") LocalDate limite);
+                               
 }
