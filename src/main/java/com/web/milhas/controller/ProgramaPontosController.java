@@ -36,7 +36,7 @@ public class ProgramaPontosController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletarPrograma(@PathVariable Long id) {
         programaPontosService.deletar(id);
         return ResponseEntity.noContent().build();
