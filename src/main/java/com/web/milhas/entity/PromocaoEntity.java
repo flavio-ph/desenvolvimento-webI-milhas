@@ -34,6 +34,9 @@ public class PromocaoEntity {
 
     private LocalDate dataFim;
 
+    @Column(name = "bonus_porcentagem")
+private Double bonusPorcentagem;
+
     @ManyToOne
     @JoinColumn(name = "programa_pontos_id", nullable = false)
     private ProgramaPontosEntity programaPontos;

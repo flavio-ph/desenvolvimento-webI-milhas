@@ -7,6 +7,7 @@ public record PromocaoResponse(
         String titulo,
         String descricao,
         String urlPromocao,
+        Double bonusPorcentagem,
         LocalDate dataInicio,
         LocalDate dataFim,
         String nomeProgramaPontos

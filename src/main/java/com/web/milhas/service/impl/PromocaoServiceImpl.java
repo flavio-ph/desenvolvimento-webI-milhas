@@ -44,6 +44,7 @@ public class PromocaoServiceImpl implements PromocaoService {
         promocao.setTitulo(dto.titulo());
         promocao.setDescricao(dto.descricao());
         promocao.setUrlPromocao(dto.urlPromocao());
+        promocao.setBonusPorcentagem(dto.bonusPorcentagem());
         promocao.setDataInicio(dto.dataInicio());
         promocao.setDataFim(dto.dataFim());
         promocao.setProgramaPontos(programa);
@@ -64,6 +65,7 @@ public class PromocaoServiceImpl implements PromocaoService {
                 entity.getTitulo(),
                 entity.getDescricao(),
                 entity.getUrlPromocao(),
+                entity.getBonusPorcentagem(),
                 entity.getDataInicio(),
                 entity.getDataFim(),
                 entity.getProgramaPontos().getNome()
