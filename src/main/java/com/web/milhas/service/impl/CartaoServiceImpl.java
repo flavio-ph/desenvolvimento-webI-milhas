@@ -12,6 +12,7 @@ import com.web.milhas.repository.CartaoRepository;
 import com.web.milhas.repository.ProgramaPontosRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.CartaoService;
+import com.web.milhas.service.SaldoService; // <--- Import Novo
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,9 @@ public class CartaoServiceImpl implements CartaoService {
     private final UsuarioRepository usuarioRepository;
     private final BandeiraRepository bandeiraRepository;
     private final ProgramaPontosRepository programaPontosRepository;
+
+    // Injeção do serviço de saldo para inicializar a carteira
+    private final SaldoService saldoService;
 
     @Override
     @Transactional
@@ -47,6 +51,9 @@ public class CartaoServiceImpl implements CartaoService {
         cartao.setCor(dto.cor());
 
         CartaoEntity salvo = cartaoRepository.save(cartao);
+
+        saldoService.inicializarSaldoPorCartao(salvo.getUsuario(), salvo.getProgramaPontos());
+
         return mapToDTO(salvo);
     }
 
@@ -82,7 +89,6 @@ public class CartaoServiceImpl implements CartaoService {
                 entity.getBandeira().getNome(),
                 entity.getProgramaPontos().getNome(),
                 entity.getCor()
-
         );
     }
 }

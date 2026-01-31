@@ -65,8 +65,9 @@ public class SaldoServiceImpl implements SaldoService {
         novoSaldo.setUsuario(usuario);
         novoSaldo.setProgramaPontos(programa);
         novoSaldo.setTotalPontos(BigDecimal.ZERO);
-        return novoSaldo;
+        return saldoPontosRepository.save(novoSaldo);
     }
+
 
     private UsuarioEntity findUsuarioByEmail(String email) {
         return usuarioRepository.findEntityByEmail(email)
@@ -80,4 +81,17 @@ public class SaldoServiceImpl implements SaldoService {
                 entity.getTotalPontos()
         );
     }
+
+    @Transactional
+    public void inicializarSaldoPorCartao(UsuarioEntity usuario, ProgramaPontosEntity programa) {
+        boolean existe = saldoPontosRepository
+                .findByUsuarioIdAndProgramaPontosId(usuario.getId(), programa.getId())
+                .isPresent();
+
+        if (!existe) {
+            criarNovoSaldo(usuario, programa);
+        }
+    }
+
+
 }
