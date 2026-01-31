@@ -4,7 +4,6 @@ import com.web.milhas.dto.movimentacao.MovimentacaoPontosResponse;
 import com.web.milhas.entity.CompraEntity;
 import com.web.milhas.entity.MovimentacaoPontosEntity;
 import com.web.milhas.entity.SaldoPontosEntity;
-import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.TipoMovimentacao;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.MovimentacaoPontosRepository;
@@ -51,27 +50,26 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
             String programa,
             String status) {
 
-<<<<<<< HEAD
+        // Validação se o usuário existe
         if (!usuarioRepository.existsByEmail(emailUsuario)) {
             throw new ResourceNotFoundException("Usuário não encontrado.");
         }
 
+        // Lógica para tratar o filtro "Todos" (ALL) vindo do front
         String filtroPrograma = (programa == null || programa.equals("ALL") || programa.isEmpty()) ? null : programa;
 
-
+        // Chamada ao repositório com os filtros
+        // Certifique-se de que seu MovimentacaoPontosRepository tem este método com esta assinatura
         return movimentacaoRepository.filtrarMovimentacoes(emailUsuario, mes, ano, filtroPrograma)
-=======
-        return movimentacaoRepository.findBySaldoPontosUsuarioIdOrderByDataMovimentacaoDesc(usuario.getId())
->>>>>>> 8c184e2586207bad9411f5a3eb0ec4c85725ae4c
                 .stream()
                 .map(this::mapToDTO)
                 .toList();
     }
 
     @Override
-    @Transactional 
+    @Transactional
     public void gerarCreditoCompra(CompraEntity compra) {
-        
+
         Long usuarioId = compra.getCartao().getUsuario().getId();
         Long programaId = compra.getCartao().getProgramaPontos().getId();
 
@@ -79,19 +77,19 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Saldo de pontos não encontrado para o usuário/programa."));
 
         saldo.setTotalPontos(saldo.getTotalPontos().add(compra.getPontosCalculados()));
-        saldoPontosRepository.save(saldo); 
+        saldoPontosRepository.save(saldo);
 
         MovimentacaoPontosEntity mov = new MovimentacaoPontosEntity();
-        
-        mov.setTipo(TipoMovimentacao.ACUMULO); 
+
+        mov.setTipo(TipoMovimentacao.ACUMULO);
         mov.setQuantidadePontos(compra.getPontosCalculados());
         mov.setDataMovimentacao(LocalDateTime.now());
         mov.setDescricao(compra.getDescricao());
 
         mov.setDataValidade(LocalDate.now().plusMonths(24));
 
-        mov.setSaldoPontos(saldo); 
-        mov.setCompra(compra);     
+        mov.setSaldoPontos(saldo);
+        mov.setCompra(compra);
 
         movimentacaoRepository.save(mov);
     }
@@ -117,5 +115,4 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
                 mov.getSaldoPontos().getProgramaPontos().getNome()
         );
     }
-
 }
