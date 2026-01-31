@@ -10,5 +10,6 @@ public record DashboardResponseDTO (
         PrazoMedioRecebimentoDTO prazoMedio,
         BigDecimal pontosExpirando,
         ResumoPendentesDTO resumoPendentes,
-        List<MovimentacaoPontosResponse> ultimasMovimentacoes
+        List<MovimentacaoPontosResponse> ultimasMovimentacoes,
+        List<HistoricoMensalDTO> historicoPontos
 ) { }

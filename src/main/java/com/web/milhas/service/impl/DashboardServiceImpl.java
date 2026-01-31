@@ -1,6 +1,7 @@
 package com.web.milhas.service.impl;
 
 import com.web.milhas.dto.dashboard.DashboardResponseDTO;
+import com.web.milhas.dto.dashboard.HistoricoMensalDTO;
 import com.web.milhas.dto.dashboard.PontosPorCartaoDTO;
 import com.web.milhas.dto.dashboard.PrazoMedioRecebimentoDTO;
 import com.web.milhas.dto.dashboard.ResumoPendentesDTO;
@@ -82,6 +83,13 @@ public class DashboardServiceImpl implements DashboardService {
                 .limit(5)
                 .toList();
 
-        return new DashboardResponseDTO(pontosPorCartao, prazoMedio, expirando, resumoPendentes, ultimas);
+        List<Object[]> dadosGrafico = movimentacaoRepository.findHistoricoAcumuloMensal(usuario.getId());
+        List<HistoricoMensalDTO> historicoPontos = dadosGrafico.stream()
+            .map(obj -> new HistoricoMensalDTO(
+                    (String) obj[0], 
+                    (BigDecimal) obj[1]
+            ))
+            .toList();
+        return new DashboardResponseDTO(pontosPorCartao, prazoMedio, expirando, resumoPendentes, ultimas, historicoPontos);
     }
 }
