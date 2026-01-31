@@ -12,8 +12,8 @@ import java.util.List;
 
 public interface MovimentacaoPontosRepository extends JpaRepository<MovimentacaoPontosEntity, Long> {
 
-    List<MovimentacaoPontosEntity> findBySaldoPontosUsuarioId(Long usuarioId);
-    List<MovimentacaoPontosEntity> findByDataMovimentacaoBetweenAndTipo(LocalDateTime inicio, LocalDateTime fim, String tipo); 
+        List<MovimentacaoPontosEntity> findBySaldoPontosUsuarioIdOrderByDataMovimentacaoDesc(Long usuarioId);
+        List<MovimentacaoPontosEntity> findByDataMovimentacaoBetweenAndTipo(LocalDateTime inicio, LocalDateTime fim, String tipo); 
 
     @Query(value = "SELECT AVG( CAST(m.data_movimentacao AS date) - c.data_compra ) " +
             "FROM milhas.movimentacao_pontos m " +

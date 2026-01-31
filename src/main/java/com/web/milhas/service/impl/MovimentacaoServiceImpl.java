@@ -48,7 +48,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
-        return movimentacaoRepository.findBySaldoPontosUsuarioId(usuario.getId())
+        return movimentacaoRepository.findBySaldoPontosUsuarioIdOrderByDataMovimentacaoDesc(usuario.getId())
                 .stream()
                 .map(this::mapToDTO)
                 .toList();
