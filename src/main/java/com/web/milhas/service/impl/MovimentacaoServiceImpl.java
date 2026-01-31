@@ -72,7 +72,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         mov.setTipo(TipoMovimentacao.ACUMULO); 
         mov.setQuantidadePontos(compra.getPontosCalculados());
         mov.setDataMovimentacao(LocalDateTime.now());
-        mov.setDescricao("Crédito referente à compra: " + compra.getDescricao());
+        mov.setDescricao(compra.getDescricao());
 
         mov.setDataValidade(LocalDate.now().plusMonths(24));
 

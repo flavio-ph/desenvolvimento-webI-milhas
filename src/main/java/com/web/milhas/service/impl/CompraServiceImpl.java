@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Service
@@ -47,15 +48,15 @@ public class CompraServiceImpl implements CompraService {
 
         BigDecimal pontosCalculados = dto.valorGasto().multiply(cartao.getFatorConversao());
 
+        // CORREÇÃO: Usando LocalDate.now() para ser compatível com a Entity
+        // Para simular o crédito rápido, a data prevista deve ser o dia de hoje.
         LocalDate dataAtual = LocalDate.now();
-        LocalDate dataCreditoPrevista = dataAtual.plusDays(PRAZO_CREDITO_DIAS);
+        LocalDate dataCreditoPrevista = LocalDate.now();
 
         CompraEntity compra = new CompraEntity();
         compra.setDescricao(dto.descricao());
         compra.setValorGasto(dto.valorGasto());
-
         compra.setDataCompra(dataAtual);
-
         compra.setCartao(cartao);
         compra.setPontosCalculados(pontosCalculados);
         compra.setDataCreditoPrevista(dataCreditoPrevista);
@@ -68,23 +69,20 @@ public class CompraServiceImpl implements CompraService {
     @Override
     public ResumoPendentesDTO calcularResumoPendentes(String emailUsuario) {
         UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
-            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         BigDecimal total = compraRepository.somarPontosPorStatus(usuario.getId(), StatusCompra.PENDENTE);
 
         LocalDate proximaData = compraRepository.findProximaDataCredito(usuario.getId(), StatusCompra.PENDENTE);
-    
+
         Integer diasRestantes = null;
         if (proximaData != null) {
             long dias = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), proximaData);
-            diasRestantes = (int) Math.max(0, dias); 
+            diasRestantes = (int) Math.max(0, dias);
         }
 
         return new ResumoPendentesDTO(total, diasRestantes);
     }
-
-    // desenvolvimento-webI-milhas/src/main/java/com/web/milhas/service/impl/CompraServiceImpl.java
 
     @Override
     @Transactional // Garante que se o crédito falhar, o status da compra não mude
@@ -129,7 +127,6 @@ public class CompraServiceImpl implements CompraService {
                 entity.getStatus(),
                 entity.getCartao().getId(),
                 entity.getCartao().getNomePersonalizado(),
-                diasParaCredito
-        );
+                diasParaCredito);
     }
 }

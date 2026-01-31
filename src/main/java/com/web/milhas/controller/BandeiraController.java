@@ -47,7 +47,7 @@ public class BandeiraController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletarBandeira(@PathVariable Long id) {
         bandeiraService.deletar(id);
         return ResponseEntity.noContent().build();

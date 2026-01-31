@@ -30,7 +30,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     // --- TAREFA 1: CREDITAR PONTOS ---
     @Override
-    @Scheduled(cron = "0 0 1 * * *") 
+    @Scheduled(fixedRate = 60000) 
     public void verificarComprasVencidas() {
         log.info("Iniciando processamento automático de créditos...");
 
