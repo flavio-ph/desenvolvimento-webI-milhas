@@ -69,4 +69,14 @@ public class PromocaoServiceImpl implements PromocaoService {
                 entity.getProgramaPontos().getNome()
         );
     }
+
+    @Override
+    @Transactional
+    public void deletarPromocao(Long id) {
+        PromocaoEntity promocao = promocaoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Promoção não encontrada."));
+        
+        promocaoRepository.delete(promocao);
+    }
+
 }
