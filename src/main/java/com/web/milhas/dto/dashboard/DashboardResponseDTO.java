@@ -9,5 +9,6 @@ public record DashboardResponseDTO (
         List<PontosPorCartaoDTO> pontosPorCartao,
         PrazoMedioRecebimentoDTO prazoMedio,
         BigDecimal pontosExpirando,
+        ResumoPendentesDTO resumoPendentes,
         List<MovimentacaoPontosResponse> ultimasMovimentacoes
 ) { }
