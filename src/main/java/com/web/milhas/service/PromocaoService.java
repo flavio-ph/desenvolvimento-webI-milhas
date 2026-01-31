@@ -9,4 +9,5 @@ public interface PromocaoService {
     List<PromocaoResponse> listarAtivas();
 
     PromocaoResponse criarPromocao(PromocaoRequest dto);
+    void deletarPromocao(Long id);
 }

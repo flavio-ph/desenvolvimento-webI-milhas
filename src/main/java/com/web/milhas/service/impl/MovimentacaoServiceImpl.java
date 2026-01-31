@@ -51,6 +51,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
             String programa,
             String status) {
 
+<<<<<<< HEAD
         if (!usuarioRepository.existsByEmail(emailUsuario)) {
             throw new ResourceNotFoundException("Usuário não encontrado.");
         }
@@ -59,6 +60,9 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
 
         return movimentacaoRepository.filtrarMovimentacoes(emailUsuario, mes, ano, filtroPrograma)
+=======
+        return movimentacaoRepository.findBySaldoPontosUsuarioIdOrderByDataMovimentacaoDesc(usuario.getId())
+>>>>>>> 8c184e2586207bad9411f5a3eb0ec4c85725ae4c
                 .stream()
                 .map(this::mapToDTO)
                 .toList();
