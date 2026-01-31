@@ -32,7 +32,10 @@ public class RelatorioServiceImpl implements RelatorioService {
 
     @Override
     public byte[] gerarCsvMovimentacoes(String emailUsuario) {
-        List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(emailUsuario);
+        // CORREÇÃO AQUI: Passamos null nos 4 parâmetros de filtro para trazer tudo
+        List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(
+                emailUsuario, null, null, null, null
+        );
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              OutputStreamWriter osw = new OutputStreamWriter(baos);
@@ -61,7 +64,11 @@ public class RelatorioServiceImpl implements RelatorioService {
     @Override
     public byte[] gerarPdfMovimentacoes(String emailUsuario) {
         UsuarioEntity usuario = buscarUsuarioPorEmail(emailUsuario);
-        List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(emailUsuario);
+
+        // CORREÇÃO AQUI: Passamos null nos 4 parâmetros de filtro para trazer tudo
+        List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(
+                emailUsuario, null, null, null, null
+        );
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4);
@@ -77,21 +84,20 @@ public class RelatorioServiceImpl implements RelatorioService {
             document.add(new Paragraph("Gerado em: " + java.time.LocalDateTime.now().format(DATE_FORMATTER)));
             document.add(Chunk.NEWLINE);
 
-            PdfPTable table = new PdfPTable(5); 
+            PdfPTable table = new PdfPTable(5);
             table.setWidthPercentage(100);
             table.setWidths(new float[]{3, 2, 3, 2, 4});
 
-
             adicionarCabecalhoTabela(table, "Data");
             adicionarCabecalhoTabela(table, "Tipo");
-            adicionarCabecalhoTabela(table, "Programa"); 
+            adicionarCabecalhoTabela(table, "Programa");
             adicionarCabecalhoTabela(table, "Pontos");
             adicionarCabecalhoTabela(table, "Descrição");
 
             for (MovimentacaoPontosResponse mov : movimentacoes) {
                 table.addCell(mov.dataMovimentacao().format(DATE_FORMATTER));
                 table.addCell(mov.tipo().name());
-                table.addCell(mov.nomePrograma()); 
+                table.addCell(mov.nomePrograma());
                 table.addCell(mov.quantidadePontos().toString());
                 table.addCell(mov.descricao() != null ? mov.descricao() : "-");
             }

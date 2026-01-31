@@ -44,11 +44,21 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
     }
 
     @Override
-    public List<MovimentacaoPontosResponse> listarMovimentacoes(String emailUsuario) {
-        UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+    public List<MovimentacaoPontosResponse> listarMovimentacoes(
+            String emailUsuario,
+            Integer mes,
+            Integer ano,
+            String programa,
+            String status) {
 
-        return movimentacaoRepository.findBySaldoPontosUsuarioId(usuario.getId())
+        if (!usuarioRepository.existsByEmail(emailUsuario)) {
+            throw new ResourceNotFoundException("Usuário não encontrado.");
+        }
+
+        String filtroPrograma = (programa == null || programa.equals("ALL") || programa.isEmpty()) ? null : programa;
+
+
+        return movimentacaoRepository.filtrarMovimentacoes(emailUsuario, mes, ano, filtroPrograma)
                 .stream()
                 .map(this::mapToDTO)
                 .toList();
@@ -103,4 +113,5 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
                 mov.getSaldoPontos().getProgramaPontos().getNome()
         );
     }
+
 }

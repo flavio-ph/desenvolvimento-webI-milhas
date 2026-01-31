@@ -38,6 +38,7 @@ public class MovimentacaoPontosEntity {
     @Column(name = "data_validade")
     private LocalDate dataValidade;
 
+    @Column(nullable = false)
     private String descricao;
 
     @ManyToOne

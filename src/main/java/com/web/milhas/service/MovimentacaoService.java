@@ -19,6 +19,13 @@ public interface MovimentacaoService {
             CompraEntity compraOrigem
     );
     void gerarCreditoCompra(CompraEntity compra);
-    List<MovimentacaoPontosResponse> listarMovimentacoes(String emailUsuario);
+    List<MovimentacaoPontosResponse> listarMovimentacoes(
+            String emailUsuario,
+            Integer mes,
+            Integer ano,
+            String programa,
+            String status
+    );
     BigDecimal consultarPontosExpirando(String emailUsuario, int dias);
+
 }

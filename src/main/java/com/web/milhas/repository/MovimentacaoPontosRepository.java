@@ -31,5 +31,17 @@ public interface MovimentacaoPontosRepository extends JpaRepository<Movimentacao
     BigDecimal somarPontosExpirando(@Param("usuarioId") Long usuarioId, 
                                     @Param("hoje") LocalDate hoje, 
                                     @Param("limite") LocalDate limite);
-                               
+
+    @Query("SELECT m FROM MovimentacaoPontosEntity m " +
+            "WHERE m.saldoPontos.usuario.email = :email " +
+            "AND (:mes IS NULL OR MONTH(m.dataMovimentacao) = :mes) " +
+            "AND (:ano IS NULL OR YEAR(m.dataMovimentacao) = :ano) " +
+            "AND (:programaNome IS NULL OR m.saldoPontos.programaPontos.nome = :programaNome) " +
+            "ORDER BY m.dataMovimentacao DESC")
+    List<MovimentacaoPontosEntity> filtrarMovimentacoes(
+            @Param("email") String email,
+            @Param("mes") Integer mes,
+            @Param("ano") Integer ano,
+            @Param("programaNome") String programaNome
+    );
 }
