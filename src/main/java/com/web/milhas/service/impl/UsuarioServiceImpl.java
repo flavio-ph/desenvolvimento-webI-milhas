@@ -97,7 +97,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             user.getTelefone(), 
             user.getCpf(), 
             user.getRole(),
-                user.getFotoPerfil()
+                user.getFotoPerfil(),
+                user.getDataCadastro()
         );
     }
 
@@ -144,16 +145,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     public String generateTwoFactorSetup(String email) {
         UsuarioEntity usuario = findUsuarioByEmail(email);
         
-        // 1. Gera um código aleatório de 6 dígitos (ex: 482910)
         String code = String.valueOf(new Random().nextInt(900000) + 100000);
         
-        // 2. Salva no banco com validade de 5 minutos
         usuario.setVerificationCode(code);
         usuario.setVerificationCodeExpiry(LocalDateTime.now().plusMinutes(5));
         usuarioRepository.save(usuario);
         
-        // 3. Retorna o código para o Controller usar
-        return code; 
+        return code;
     }
 
     @Override
@@ -194,17 +192,17 @@ public class UsuarioServiceImpl implements UsuarioService {
         String nomeUnico = UUID.randomUUID().toString() + extensao;
 
         try {
-            // storageLocation deve apontar para o diretório definido no application.properties
             java.nio.file.Path targetLocation = java.nio.file.Paths.get("./uploads").toAbsolutePath().normalize().resolve(nomeUnico);
             java.nio.file.Files.copy(arquivo.getInputStream(), targetLocation, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-            // Guarda apenas o nome do ficheiro no banco de dados
             usuario.setFotoPerfil(nomeUnico);
             usuarioRepository.save(usuario);
         } catch (java.io.IOException ex) {
             throw new RuntimeException("Erro ao salvar foto de perfil", ex);
         }
     }
+
+
 
 
 }

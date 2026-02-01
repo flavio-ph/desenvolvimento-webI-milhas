@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +44,10 @@ public class UsuarioEntity implements UserDetails {
 
     @Column
     private String cpf;
+
+    @CreationTimestamp
+    @Column(name = "data_cadastro", updatable = false)
+    private LocalDateTime dataCadastro;
 
     @Column(name = "two_factor_enabled")
     private boolean twoFactorEnabled = false;
