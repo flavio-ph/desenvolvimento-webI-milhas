@@ -14,6 +14,8 @@ public interface CompraRepository extends JpaRepository<CompraEntity, Long> {
 
     List<CompraEntity> findByCartaoUsuarioId(Long usuarioId);
 
+    boolean existsByCartaoId(Long cartaoId);
+
    List<CompraEntity> findByStatusAndDataCreditoPrevistaLessThanEqual(StatusCompra status, LocalDate data);
 
     @Query("SELECT new com.web.milhas.dto.dashboard.PontosPorCartaoDTO(c.cartao.id, c.cartao.nomePersonalizado, SUM(c.pontosCalculados)) " +

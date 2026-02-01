@@ -80,4 +80,9 @@ public class GlobalExceptionHandler {
                 .body("Acesso negado: Somente administradores podem realizar esta ação.");
     }
 
+    @ExceptionHandler(RegraNegocioException.class)
+    public ResponseEntity<Object> handleRegraNegocio(RegraNegocioException ex, WebRequest req) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+    }
+
 }

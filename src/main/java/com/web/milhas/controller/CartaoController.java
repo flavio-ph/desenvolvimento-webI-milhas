@@ -44,4 +44,15 @@ public class CartaoController {
         cartaoService.excluirCartao(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CartaoResponse> atualizar(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id,
+            @Valid @RequestBody CartaoRequest dto) {
+
+        CartaoResponse response = cartaoService.atualizarCartao(id, dto, userDetails.getUsername());
+        return ResponseEntity.ok(response);
+    }
+
 }
