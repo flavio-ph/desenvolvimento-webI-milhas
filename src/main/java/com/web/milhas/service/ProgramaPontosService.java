@@ -1,6 +1,9 @@
 package com.web.milhas.service;
 
 import com.web.milhas.dto.programapontos.ProgramaPontosDTO;
+import com.web.milhas.dto.promocao.PromocaoRequest;
+import com.web.milhas.dto.promocao.PromocaoResponse;
+
 import java.util.List;
 
 public interface ProgramaPontosService {
@@ -9,6 +12,8 @@ public interface ProgramaPontosService {
 
 
     ProgramaPontosDTO salvar(ProgramaPontosDTO dto);
-
+    
     void deletar(Long id);
+
+
 }

@@ -35,4 +35,9 @@ public class PromocaoController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PromocaoResponse> atualizar(@PathVariable Long id, @Valid @RequestBody PromocaoRequest dto) {
+        return ResponseEntity.ok(promocaoService.atualizarPromocao(id, dto));
+    }
+
 }

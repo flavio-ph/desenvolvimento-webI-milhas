@@ -10,5 +10,6 @@ public record PromocaoResponse(
         Double bonusPorcentagem,
         LocalDate dataInicio,
         LocalDate dataFim,
-        String nomeProgramaPontos
+        String nomeProgramaPontos,
+        Long programaPontosId
 ) {}

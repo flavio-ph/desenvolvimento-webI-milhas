@@ -37,6 +37,17 @@ public class PromocaoServiceImpl implements PromocaoService {
     @Override
     @Transactional
     public PromocaoResponse criarPromocao(PromocaoRequest dto) {
+
+        // 1. Validação de Data Passada (Apenas para novas)
+        if (dto.dataInicio().isBefore(java.time.LocalDate.now())) {
+            throw new IllegalArgumentException("A data de início não pode ser no passado.");
+        }
+
+        // 2. Validação de Coerência (Fim deve ser depois do Início)
+        if (dto.dataFim().isBefore(dto.dataInicio())) {
+            throw new IllegalArgumentException("A data final deve ser posterior à data de início.");
+        }
+
         ProgramaPontosEntity programa = programaPontosRepository.findById(dto.programaPontosId())
                 .orElseThrow(() -> new ResourceNotFoundException("Programa de pontos não encontrado."));
 
@@ -68,7 +79,8 @@ public class PromocaoServiceImpl implements PromocaoService {
                 entity.getBonusPorcentagem(),
                 entity.getDataInicio(),
                 entity.getDataFim(),
-                entity.getProgramaPontos().getNome()
+                entity.getProgramaPontos().getNome(),
+                entity.getProgramaPontos().getId()
         );
     }
 
@@ -79,6 +91,30 @@ public class PromocaoServiceImpl implements PromocaoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Promoção não encontrada."));
         
         promocaoRepository.delete(promocao);
+    }
+
+    @Override
+    @Transactional
+    public PromocaoResponse atualizarPromocao(Long id, PromocaoRequest dto) {
+        PromocaoEntity promocao = promocaoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Promoção não encontrada."));
+
+        if (dto.dataFim().isBefore(dto.dataInicio())) {
+            throw new IllegalArgumentException("A data final deve ser posterior à data de início.");
+        }
+
+        ProgramaPontosEntity programa = programaPontosRepository.findById(dto.programaPontosId())
+                .orElseThrow(() -> new ResourceNotFoundException("Programa de pontos não encontrado."));
+
+        promocao.setTitulo(dto.titulo());
+        promocao.setDescricao(dto.descricao());
+        promocao.setUrlPromocao(dto.urlPromocao());
+        promocao.setBonusPorcentagem(dto.bonusPorcentagem());
+        promocao.setDataInicio(dto.dataInicio());
+        promocao.setDataFim(dto.dataFim());
+        promocao.setProgramaPontos(programa);
+
+        return mapToDTO(promocaoRepository.save(promocao));
     }
 
 }
