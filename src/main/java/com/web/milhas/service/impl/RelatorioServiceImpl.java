@@ -32,7 +32,6 @@ public class RelatorioServiceImpl implements RelatorioService {
 
     @Override
     public byte[] gerarCsvMovimentacoes(String emailUsuario) {
-        // CORREÇÃO AQUI: Passamos null nos 4 parâmetros de filtro para trazer tudo
         List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(
                 emailUsuario, null, null, null, null
         );
@@ -65,7 +64,6 @@ public class RelatorioServiceImpl implements RelatorioService {
     public byte[] gerarPdfMovimentacoes(String emailUsuario) {
         UsuarioEntity usuario = buscarUsuarioPorEmail(emailUsuario);
 
-        // CORREÇÃO AQUI: Passamos null nos 4 parâmetros de filtro para trazer tudo
         List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(
                 emailUsuario, null, null, null, null
         );

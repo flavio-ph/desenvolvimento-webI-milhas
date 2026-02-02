@@ -8,7 +8,7 @@ import com.web.milhas.entity.SaldoPontosEntity;
 import com.web.milhas.entity.enums.TipoMovimentacao;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.MovimentacaoPontosRepository;
-import com.web.milhas.repository.ParticipacaoPromocaoRepository; // Agora vai funcionar
+import com.web.milhas.repository.ParticipacaoPromocaoRepository; 
 import com.web.milhas.repository.SaldoPontosRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.MovimentacaoService;

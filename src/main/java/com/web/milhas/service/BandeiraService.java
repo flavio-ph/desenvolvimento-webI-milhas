@@ -8,6 +8,5 @@ public interface BandeiraService {
     List<BandeiraDTO> listarTodas();
     List<BandeiraDTO> listarAtivas();
     BandeiraDTO salvar(BandeiraDTO dto);
-
     void deletar(Long id);
 }

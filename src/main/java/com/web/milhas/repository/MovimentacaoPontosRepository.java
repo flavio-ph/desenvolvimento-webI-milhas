@@ -32,7 +32,6 @@ public interface MovimentacaoPontosRepository extends JpaRepository<Movimentacao
                                         @Param("hoje") LocalDate hoje,
                                         @Param("limite") LocalDate limite);
 
-        // Método novo para os filtros da tela de Extrato
         @Query("SELECT m FROM MovimentacaoPontosEntity m " +
                 "WHERE m.saldoPontos.usuario.email = :email " +
                 "AND (:mes IS NULL OR MONTH(m.dataMovimentacao) = :mes) " +
@@ -46,13 +45,12 @@ public interface MovimentacaoPontosRepository extends JpaRepository<Movimentacao
                 @Param("programaNome") String programaNome
         );
 
-         // Método mantido para o Dashboard (Gráficos)
         @Query(value = "SELECT to_char(m.data_movimentacao, 'DD/MM') as mes, " +
                "SUM(m.quantidade_pontos) as pontos " +
                "FROM milhas.movimentacao_pontos m " +
                "WHERE m.saldo_pontos_id IN (SELECT id FROM milhas.saldo_pontos WHERE usuario_id = :usuarioId) " +
                "AND m.tipo = 'ACUMULO' " +
-               "AND m.data_movimentacao >= CURRENT_DATE - INTERVAL '30 days' " + // Alterado para 30 dias para não poluir o gráfico
+               "AND m.data_movimentacao >= CURRENT_DATE - INTERVAL '30 days' " + 
                "GROUP BY to_char(m.data_movimentacao, 'DD/MM'), date_trunc('day', m.data_movimentacao) " +
                "ORDER BY date_trunc('day', m.data_movimentacao) ASC",
                nativeQuery = true)

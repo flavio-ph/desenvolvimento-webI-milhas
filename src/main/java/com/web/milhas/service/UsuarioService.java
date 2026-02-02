@@ -9,14 +9,11 @@ import com.web.milhas.dto.usuario.UsuarioUpdateRequest;
 
 public interface UsuarioService {
     void registrarUsuario(RegisterRequest dto);
-    UsuarioResponse updateProfile(String userEmail, UsuarioUpdateRequest dto);
-    UsuarioResponse getProfile(String userEmail);
-
-
-    String requestPasswordReset(String email);
-
     void resetPassword(UpdatePasswordRequest dto);
     void uploadFotoPerfil(String email, MultipartFile arquivo);
+    UsuarioResponse updateProfile(String userEmail, UsuarioUpdateRequest dto);
+    UsuarioResponse getProfile(String userEmail);
+    String requestPasswordReset(String email);
     String generateTwoFactorSetup(String email);
     boolean verifyTwoFactor(String email, int code);
 }

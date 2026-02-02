@@ -36,13 +36,7 @@ public class BandeiraController {
     @PutMapping("/{id}")
     //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BandeiraDTO> atualizarBandeira(@PathVariable Long id, @Valid @RequestBody BandeiraDTO dto) {
-        BandeiraDTO dtoAtualizado = new BandeiraDTO(
-            id, 
-            dto.nome(), 
-            dto.status(), 
-            dto.cor(),
-            0L
-        );
+        BandeiraDTO dtoAtualizado = new BandeiraDTO(id, dto.nome(), dto.status(), dto.cor(), 0L);
         return ResponseEntity.ok(bandeiraService.salvar(dtoAtualizado));
     }
 

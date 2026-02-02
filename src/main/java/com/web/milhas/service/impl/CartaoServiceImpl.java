@@ -10,7 +10,7 @@ import com.web.milhas.exception.RegraNegocioException;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.repository.*;
 import com.web.milhas.service.CartaoService;
-import com.web.milhas.service.SaldoService; // <--- Import Novo
+import com.web.milhas.service.SaldoService; 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +26,6 @@ public class CartaoServiceImpl implements CartaoService {
     private final BandeiraRepository bandeiraRepository;
     private final ProgramaPontosRepository programaPontosRepository;
     private final CompraRepository compraRepository;
-
-    // Injeção do serviço de saldo para inicializar a carteira
     private final SaldoService saldoService;
 
     @Override

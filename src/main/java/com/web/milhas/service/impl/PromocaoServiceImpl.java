@@ -25,7 +25,7 @@ public class PromocaoServiceImpl implements PromocaoService {
     private final ProgramaPontosRepository programaPontosRepository;
     private final NotificacaoService notificacaoService;
     private final ParticipacaoPromocaoRepository participacaoRepository;
-    private final UsuarioRepository usuarioRepository; // Injete isso no construtor
+    private final UsuarioRepository usuarioRepository; 
 
 
     @Override
@@ -40,12 +40,10 @@ public class PromocaoServiceImpl implements PromocaoService {
     @Transactional
     public PromocaoResponse criarPromocao(PromocaoRequest dto) {
 
-        // 1. Validação de Data Passada (Apenas para novas)
         if (dto.dataInicio().isBefore(java.time.LocalDate.now())) {
             throw new IllegalArgumentException("A data de início não pode ser no passado.");
         }
 
-        // 2. Validação de Coerência (Fim deve ser depois do Início)
         if (dto.dataFim().isBefore(dto.dataInicio())) {
             throw new IllegalArgumentException("A data final deve ser posterior à data de início.");
         }

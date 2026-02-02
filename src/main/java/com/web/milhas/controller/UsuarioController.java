@@ -36,13 +36,8 @@ public class UsuarioController {
 
     @GetMapping("/me/2fa/generate")
     public ResponseEntity<Void> generate2FA(@AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
-        
-        // Gera o código
         String code = usuarioService.generateTwoFactorSetup(userDetails.getUsername());
-        
         System.out.println("Código 2FA gerado: " + code);
-        
-        // Retorna sucesso, mas SEM o código no corpo da resposta
         return ResponseEntity.ok().build();
     }
 
@@ -61,11 +56,8 @@ public class UsuarioController {
         }
     }
     
-    // Endpoint para desativar (opcional, mas bom ter)
     @PostMapping("/me/2fa/disable")
     public ResponseEntity<Void> disable2FA(@AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
-        // Você precisará criar este método no service se quiser usar o botão de desativar
-        // usuarioService.disableTwoFactor(userDetails.getUsername()); 
         return ResponseEntity.noContent().build();
     }
 

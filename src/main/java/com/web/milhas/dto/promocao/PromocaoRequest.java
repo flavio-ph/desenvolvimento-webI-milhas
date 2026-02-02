@@ -12,9 +12,12 @@ public record PromocaoRequest(
         String titulo,
         String descricao,
         String urlPromocao,
-        @NotNull Double bonusPorcentagem,
-        @NotNull(message = "A data de início é obrigatória") LocalDate dataInicio,
-        @NotNull @FutureOrPresent LocalDate dataFim,
+        @NotNull 
+        Double bonusPorcentagem,
+        @NotNull(message = "A data de início é obrigatória") 
+        LocalDate dataInicio,
+        @NotNull @FutureOrPresent 
+        LocalDate dataFim,
         @NotNull(message = "O ID do programa de pontos é obrigatório")
         Long programaPontosId) {
 }

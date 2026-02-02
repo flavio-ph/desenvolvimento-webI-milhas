@@ -4,5 +4,4 @@ public interface SchedulerService {
 
     void verificarComprasVencidas();
     void verificarValidadePontos();
-
 }

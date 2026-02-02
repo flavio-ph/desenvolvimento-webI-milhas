@@ -33,7 +33,7 @@ public class PromocaoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        promocaoService.deletarPromocao(id); // Verifique se o nome no service é este
+        promocaoService.deletarPromocao(id); 
         return ResponseEntity.noContent().build();
     }
 

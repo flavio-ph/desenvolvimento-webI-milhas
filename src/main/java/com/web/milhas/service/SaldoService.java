@@ -10,8 +10,6 @@ import java.util.List;
 public interface SaldoService {
 
     List<SaldoPontosResponse> consultarSaldos(String emailUsuario);
-
     void creditarPontosCompra(CompraEntity compra);
-
     void inicializarSaldoPorCartao(UsuarioEntity usuario, ProgramaPontosEntity programa);
 }

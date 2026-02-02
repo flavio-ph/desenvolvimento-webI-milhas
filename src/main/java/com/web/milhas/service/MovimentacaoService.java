@@ -10,22 +10,8 @@ import java.util.List;
 
 public interface MovimentacaoService {
 
-
-    void registrarMovimentacao(
-            SaldoPontosEntity saldo,
-            TipoMovimentacao tipo,
-            BigDecimal quantidade,
-            String descricao,
-            CompraEntity compraOrigem
-    );
+    void registrarMovimentacao(SaldoPontosEntity saldo, TipoMovimentacao tipo, BigDecimal quantidade, String descricao, CompraEntity compraOrigem);
     void gerarCreditoCompra(CompraEntity compra);
-    List<MovimentacaoPontosResponse> listarMovimentacoes(
-            String emailUsuario,
-            Integer mes,
-            Integer ano,
-            String programa,
-            String status
-    );
+    List<MovimentacaoPontosResponse> listarMovimentacoes(String emailUsuario, Integer mes, Integer ano, String programa, String status);
     BigDecimal consultarPontosExpirando(String emailUsuario, int dias);
-
 }

@@ -12,5 +12,5 @@ public record UsuarioResponse(
         String cpf,
         UserRole role,
         String fotoPerfil,
-        LocalDateTime dataCadastro // Novo campo
+        LocalDateTime dataCadastro 
 ) {}

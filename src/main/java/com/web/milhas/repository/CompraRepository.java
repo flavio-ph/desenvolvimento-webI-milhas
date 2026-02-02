@@ -12,12 +12,9 @@ import java.util.List;
 
 public interface CompraRepository extends JpaRepository<CompraEntity, Long> {
 
-    List<CompraEntity> findByCartaoUsuarioId(Long usuarioId);
-
-    boolean existsByCartaoId(Long cartaoId);
-
+   List<CompraEntity> findByCartaoUsuarioId(Long usuarioId);
    List<CompraEntity> findByStatusAndDataCreditoPrevistaLessThanEqual(StatusCompra status, LocalDate data);
-
+   boolean existsByCartaoId(Long cartaoId);
     @Query("SELECT new com.web.milhas.dto.dashboard.PontosPorCartaoDTO(c.cartao.id, c.cartao.nomePersonalizado, SUM(c.pontosCalculados)) " +
             "FROM CompraEntity c " +
             "WHERE c.cartao.usuario.id = :usuarioId AND c.status = com.web.milhas.entity.enums.StatusCompra.CREDITADO " +

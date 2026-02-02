@@ -9,6 +9,5 @@ import java.util.Optional;
 public interface SaldoPontosRepository extends JpaRepository<SaldoPontosEntity, Long> {
 
     List<SaldoPontosEntity> findByUsuarioId(Long usuarioId);
-
     Optional<SaldoPontosEntity> findByUsuarioIdAndProgramaPontosId(Long usuarioId, Long programaPontosId);
 }

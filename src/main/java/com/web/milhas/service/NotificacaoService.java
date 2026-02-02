@@ -8,13 +8,8 @@ import java.util.List;
 
 public interface NotificacaoService {
 
-
     List<NotificacaoResponse> listarMinhasNotificacoes(String emailUsuario);
-
     void criarNotificacao(UsuarioEntity destinatario, String mensagem, TipoNotificacao tipo, CompraEntity compraRelacionada);
-
     void notificarTodos(String mensagem, TipoNotificacao tipo);
-
-
     void marcarComoLida(Long idNotificacao, String emailUsuario);
 }

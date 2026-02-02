@@ -47,9 +47,6 @@ public class CompraServiceImpl implements CompraService {
         }
 
         BigDecimal pontosCalculados = dto.valorGasto().multiply(cartao.getFatorConversao());
-
-        // CORREÇÃO: Usando LocalDate.now() para ser compatível com a Entity
-        // Para simular o crédito rápido, a data prevista deve ser o dia de hoje.
         LocalDate dataAtual = LocalDate.now();
         LocalDate dataCreditoPrevista = LocalDate.now();
 
@@ -85,22 +82,15 @@ public class CompraServiceImpl implements CompraService {
     }
 
     @Override
-    @Transactional // Garante que se o crédito falhar, o status da compra não mude
+    @Transactional 
     public void creditarCompra(Long compraId) {
-        // 1. Localiza a compra
         CompraEntity compra = compraRepository.findById(compraId)
                 .orElseThrow(() -> new ResourceNotFoundException("Compra não encontrada"));
-
-        // 2. Verifica se já não foi processada
         if (compra.getStatus() == StatusCompra.CREDITADO) {
             throw new IllegalStateException("Esta compra já foi creditada.");
         }
-
-        // 3. Atualiza o status para CREDITADA
         compra.setStatus(StatusCompra.CREDITADO);
         compraRepository.save(compra);
-
-        // 4. GATILHO: Chama o serviço de movimentação para gerar os pontos no extrato
         movimentacaoService.gerarCreditoCompra(compra);
     }
 

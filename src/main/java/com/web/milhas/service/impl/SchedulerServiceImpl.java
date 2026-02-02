@@ -28,7 +28,6 @@ public class SchedulerServiceImpl implements SchedulerService {
     private final NotificacaoService notificacaoService;
     private final MovimentacaoPontosRepository movimentacaoRepository;
 
-    // --- TAREFA 1: CREDITAR PONTOS ---
     @Override
     @Scheduled(fixedRate = 60000) 
     public void verificarComprasVencidas() {
@@ -46,12 +45,11 @@ public class SchedulerServiceImpl implements SchedulerService {
             try {
                 compraService.creditarCompra(compra.getId());
 
-                // 1. CORREÇÃO AQUI: Passamos a 'compra' como 4º argumento
                 notificacaoService.criarNotificacao(
                         compra.getCartao().getUsuario(),
                         "Crédito Realizado: Os seus pontos da compra '" + compra.getDescricao() + "' foram creditados!",
                         TipoNotificacao.CREDITO_REALIZADO,
-                        compra // <--- AQUÍ: O objeto Compra
+                        compra 
                 );
                 log.info("Compra ID {} creditada com sucesso.", compra.getId());
                 
@@ -61,7 +59,6 @@ public class SchedulerServiceImpl implements SchedulerService {
         }
     }
 
-    // --- TAREFA 2: VERIFICAR VALIDADE DOS PONTOS ---
     @Override
     @Scheduled(cron = "0 0 8 * * *") 
     public void verificarValidadePontos() {
@@ -69,7 +66,6 @@ public class SchedulerServiceImpl implements SchedulerService {
 
         LocalDateTime agora = LocalDateTime.now();
         
-        // AVISO PRÉVIO
         LocalDateTime dataAviso = agora.minusMonths(23);
         List<MovimentacaoPontosEntity> vencendo = movimentacaoRepository.findByDataMovimentacaoBetweenAndTipo(
                 dataAviso.minusDays(1), 
@@ -78,16 +74,14 @@ public class SchedulerServiceImpl implements SchedulerService {
         );
 
         for (MovimentacaoPontosEntity mov : vencendo) {
-            // 2. CORREÇÃO AQUI: Passamos 'null' pois não é uma compra específica
             notificacaoService.criarNotificacao(
                 mov.getSaldoPontos().getUsuario(),
                 "Seus pontos vão vencer! Atenção: " + mov.getQuantidadePontos() + " pontos expiram em 30 dias.",
                 TipoNotificacao.AVISO_EXPIRACAO,
-                null // <--- AQUÍ: Passamos null
+                null 
             );
         }
 
-        // EXPIRADO HOJE
         LocalDateTime dataVencimento = agora.minusMonths(24);
         List<MovimentacaoPontosEntity> vencidos = movimentacaoRepository.findByDataMovimentacaoBetweenAndTipo(
                 dataVencimento.minusDays(1), 
@@ -96,12 +90,11 @@ public class SchedulerServiceImpl implements SchedulerService {
         );
 
         for (MovimentacaoPontosEntity mov : vencidos) {
-            // 3. CORREÇÃO AQUI: Passamos 'null' também
             notificacaoService.criarNotificacao(
                 mov.getSaldoPontos().getUsuario(),
                 "Pontos Expirados: Infelizmente " + mov.getQuantidadePontos() + " pontos expiraram hoje.",
                 TipoNotificacao.PONTOS_EXPIRADOS,
-                null // <--- AQUÍ: Passamos null
+                null 
             );
             
             log.warn("Pontos expirados para o usuário {}: {}", mov.getSaldoPontos().getUsuario().getId(), mov.getQuantidadePontos());

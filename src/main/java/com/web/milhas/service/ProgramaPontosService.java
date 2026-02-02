@@ -9,11 +9,6 @@ import java.util.List;
 public interface ProgramaPontosService {
 
     List<ProgramaPontosDTO> listarTodos();
-
-
     ProgramaPontosDTO salvar(ProgramaPontosDTO dto);
-    
     void deletar(Long id);
-
-
 }
