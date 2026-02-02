@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +40,15 @@ public class PromocaoController {
     @PutMapping("/{id}")
     public ResponseEntity<PromocaoResponse> atualizar(@PathVariable Long id, @Valid @RequestBody PromocaoRequest dto) {
         return ResponseEntity.ok(promocaoService.atualizarPromocao(id, dto));
+    }
+
+    @PostMapping("/{id}/participar")
+    public ResponseEntity<Void> participar(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        promocaoService.participarPromocao(id, userDetails.getUsername());
+        return ResponseEntity.ok().build();
     }
 
 }

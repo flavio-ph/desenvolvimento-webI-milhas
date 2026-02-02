@@ -2,15 +2,14 @@ package com.web.milhas.service.impl;
 
 import com.web.milhas.dto.promocao.PromocaoRequest;
 import com.web.milhas.dto.promocao.PromocaoResponse;
+import com.web.milhas.entity.ParticipacaoPromocaoEntity;
 import com.web.milhas.entity.ProgramaPontosEntity;
 import com.web.milhas.entity.PromocaoEntity;
 import com.web.milhas.entity.enums.TipoNotificacao;
+import com.web.milhas.exception.RegraNegocioException;
 import com.web.milhas.exception.ResourceNotFoundException;
-import com.web.milhas.repository.NotificacaoRepository;
-import com.web.milhas.repository.ProgramaPontosRepository;
-import com.web.milhas.repository.PromocaoRepository;
-import com.web.milhas.repository.UsuarioRepository;
-import com.web.milhas.service.NotificacaoService; 
+import com.web.milhas.repository.*;
+import com.web.milhas.service.NotificacaoService;
 import com.web.milhas.service.PromocaoService; 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,9 @@ public class PromocaoServiceImpl implements PromocaoService {
     private final PromocaoRepository promocaoRepository;
     private final ProgramaPontosRepository programaPontosRepository;
     private final NotificacaoService notificacaoService;
+    private final ParticipacaoPromocaoRepository participacaoRepository;
+    private final UsuarioRepository usuarioRepository; // Injete isso no construtor
+
 
     @Override
     public List<PromocaoResponse> listarAtivas() {
@@ -115,6 +117,26 @@ public class PromocaoServiceImpl implements PromocaoService {
         promocao.setProgramaPontos(programa);
 
         return mapToDTO(promocaoRepository.save(promocao));
+    }
+
+
+    @Override
+    public void participarPromocao(Long idPromocao, String emailUsuario) {
+        var usuario = usuarioRepository.findEntityByEmail(emailUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        var promocao = promocaoRepository.findById(idPromocao)
+                .orElseThrow(() -> new ResourceNotFoundException("Promoção não encontrada"));
+
+        if (participacaoRepository.existsByUsuarioIdAndPromocaoId(usuario.getId(), promocao.getId())) {
+            throw new RegraNegocioException("Você já está participando desta promoção.");
+        }
+
+        ParticipacaoPromocaoEntity part = new ParticipacaoPromocaoEntity();
+        part.setUsuario(usuario);
+        part.setPromocao(promocao);
+
+        participacaoRepository.save(part);
     }
 
 }

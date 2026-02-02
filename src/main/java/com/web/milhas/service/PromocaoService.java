@@ -11,4 +11,5 @@ public interface PromocaoService {
     PromocaoResponse criarPromocao(PromocaoRequest dto);
     PromocaoResponse atualizarPromocao(Long id, PromocaoRequest dto);
     void deletarPromocao(Long id);
+    void participarPromocao(Long idPromocao, String emailUsuario);
 }
