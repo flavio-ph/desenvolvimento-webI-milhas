@@ -8,9 +8,10 @@ import com.web.milhas.entity.ProgramaPontosEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.exception.RegraNegocioException;
 import com.web.milhas.exception.ResourceNotFoundException;
+import com.web.milhas.mapper.CartaoMapper; // Novo import
 import com.web.milhas.repository.*;
 import com.web.milhas.service.CartaoService;
-import com.web.milhas.service.SaldoService; 
+import com.web.milhas.service.SaldoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class CartaoServiceImpl implements CartaoService {
     private final ProgramaPontosRepository programaPontosRepository;
     private final CompraRepository compraRepository;
     private final SaldoService saldoService;
+    private final CartaoMapper cartaoMapper; // Injeção do Mapper
 
     @Override
     @Transactional
@@ -51,16 +53,18 @@ public class CartaoServiceImpl implements CartaoService {
 
         saldoService.inicializarSaldoPorCartao(salvo.getUsuario(), salvo.getProgramaPontos());
 
-        return mapToDTO(salvo);
+        return cartaoMapper.toResponse(salvo); // Conversão via Mapper
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CartaoResponse> listarCartoes(String emailUsuario) {
         UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
-        return cartaoRepository.findByUsuarioId(usuario.getId()).stream()
-                .map(this::mapToDTO)
-                .toList();
+
+        List<CartaoEntity> cartoes = cartaoRepository.findByUsuarioId(usuario.getId());
+
+        return cartaoMapper.toResponseList(cartoes); // Conversão de lista via Mapper
     }
 
     @Override
@@ -77,17 +81,7 @@ public class CartaoServiceImpl implements CartaoService {
         cartaoRepository.delete(cartao);
     }
 
-    private CartaoResponse mapToDTO(CartaoEntity entity) {
-        return new CartaoResponse(
-                entity.getId(),
-                entity.getNomePersonalizado(),
-                entity.getUltimosDigitos(),
-                entity.getFatorConversao(),
-                entity.getBandeira().getNome(),
-                entity.getProgramaPontos().getNome(),
-                entity.getCor()
-        );
-    }
+    // Método mapToDTO removido para utilizar o MapStruct
 
     @Override
     @Transactional
@@ -119,7 +113,6 @@ public class CartaoServiceImpl implements CartaoService {
         cartao.setCor(dto.cor());
 
         CartaoEntity atualizado = cartaoRepository.save(cartao);
-        return mapToDTO(atualizado);
+        return cartaoMapper.toResponse(atualizado);
     }
-
 }

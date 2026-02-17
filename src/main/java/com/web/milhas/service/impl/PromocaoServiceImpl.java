@@ -8,9 +8,10 @@ import com.web.milhas.entity.PromocaoEntity;
 import com.web.milhas.entity.enums.TipoNotificacao;
 import com.web.milhas.exception.RegraNegocioException;
 import com.web.milhas.exception.ResourceNotFoundException;
+import com.web.milhas.mapper.PromocaoMapper; // Novo import
 import com.web.milhas.repository.*;
 import com.web.milhas.service.NotificacaoService;
-import com.web.milhas.service.PromocaoService; 
+import com.web.milhas.service.PromocaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +26,14 @@ public class PromocaoServiceImpl implements PromocaoService {
     private final ProgramaPontosRepository programaPontosRepository;
     private final NotificacaoService notificacaoService;
     private final ParticipacaoPromocaoRepository participacaoRepository;
-    private final UsuarioRepository usuarioRepository; 
+    private final UsuarioRepository usuarioRepository;
+    private final PromocaoMapper promocaoMapper; // Injeção do Mapper
 
 
     @Override
     public List<PromocaoResponse> listarAtivas() {
-
         return promocaoRepository.findAll().stream()
-                .map(this::mapToDTO)
+                .map(promocaoMapper::toResponse) // Conversão via Mapper
                 .toList();
     }
 
@@ -67,29 +68,17 @@ public class PromocaoServiceImpl implements PromocaoService {
                 TipoNotificacao.PROMOCAO
         );
 
-        return mapToDTO(salva);
+        return promocaoMapper.toResponse(salva); // Conversão via Mapper
     }
 
-    private PromocaoResponse mapToDTO(PromocaoEntity entity) {
-        return new PromocaoResponse(
-                entity.getId(),
-                entity.getTitulo(),
-                entity.getDescricao(),
-                entity.getUrlPromocao(),
-                entity.getBonusPorcentagem(),
-                entity.getDataInicio(),
-                entity.getDataFim(),
-                entity.getProgramaPontos().getNome(),
-                entity.getProgramaPontos().getId()
-        );
-    }
+    // Método mapToDTO removido para utilizar o MapStruct
 
     @Override
     @Transactional
     public void deletarPromocao(Long id) {
         PromocaoEntity promocao = promocaoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Promoção não encontrada."));
-        
+
         promocaoRepository.delete(promocao);
     }
 
@@ -114,7 +103,7 @@ public class PromocaoServiceImpl implements PromocaoService {
         promocao.setDataFim(dto.dataFim());
         promocao.setProgramaPontos(programa);
 
-        return mapToDTO(promocaoRepository.save(promocao));
+        return promocaoMapper.toResponse(promocaoRepository.save(promocao));
     }
 
 

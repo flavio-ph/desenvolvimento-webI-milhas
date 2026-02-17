@@ -2,7 +2,7 @@ package com.web.milhas.service.impl;
 
 import com.web.milhas.dto.bandeira.BandeiraDTO;
 import com.web.milhas.entity.BandeiraEntity;
-import com.web.milhas.exception.ResourceNotFoundException;
+import com.web.milhas.mapper.BandeiraMapper; // Novo import
 import com.web.milhas.repository.BandeiraRepository;
 import com.web.milhas.repository.CartaoRepository;
 import com.web.milhas.service.BandeiraService;
@@ -18,12 +18,23 @@ public class BandeiraServiceImpl implements BandeiraService {
 
     private final BandeiraRepository bandeiraRepository;
     private final CartaoRepository cartaoRepository;
+    private final BandeiraMapper bandeiraMapper; // Injeção do Mapper
 
     @Override
     public List<BandeiraDTO> listarTodas() {
         return bandeiraRepository.findAll()
                 .stream()
-                .map(this::toDTOComContagem) 
+                .map(entity -> {
+                    BandeiraDTO dto = bandeiraMapper.toDTO(entity);
+                    // Preenche a contagem de cartões que o Mapper ignora por padrão
+                    return new BandeiraDTO(
+                            dto.id(),
+                            dto.nome(),
+                            dto.status(),
+                            dto.cor(),
+                            cartaoRepository.countByBandeira(entity)
+                    );
+                })
                 .toList();
     }
 
@@ -31,15 +42,15 @@ public class BandeiraServiceImpl implements BandeiraService {
     public List<BandeiraDTO> listarAtivas() {
         return bandeiraRepository.findByStatus("ACTIVE")
                 .stream()
-                .map(this::toDTO)
+                .map(bandeiraMapper::toDTO)
                 .toList();
     }
 
     @Override
     @Transactional
     public BandeiraDTO salvar(BandeiraDTO dto) {
-        BandeiraEntity entity = toEntity(dto);
-        
+        BandeiraEntity entity = bandeiraMapper.toEntity(dto);
+
         if (entity.getStatus() == null || entity.getStatus().isEmpty()) {
             entity.setStatus("ACTIVE");
         }
@@ -48,7 +59,7 @@ public class BandeiraServiceImpl implements BandeiraService {
         }
 
         BandeiraEntity salvo = bandeiraRepository.save(entity);
-        return toDTO(salvo);
+        return bandeiraMapper.toDTO(salvo);
     }
 
     @Override
@@ -61,28 +72,4 @@ public class BandeiraServiceImpl implements BandeiraService {
         }
     }
 
-    private BandeiraDTO toDTOComContagem(BandeiraEntity entity) {
-        long quantidade = cartaoRepository.countByBandeira(entity);
-        
-        return new BandeiraDTO(
-                entity.getId(),
-                entity.getNome(),
-                entity.getStatus(),
-                entity.getCor(),
-                quantidade 
-        );
-    }
-
-    private BandeiraDTO toDTO(BandeiraEntity entity) {
-        return new BandeiraDTO(entity.getId(), entity.getNome(), entity.getStatus(), entity.getCor(), 0L);
-    }
-
-    private BandeiraEntity toEntity(BandeiraDTO dto) {
-        BandeiraEntity entity = new BandeiraEntity();
-        entity.setId(dto.id());
-        entity.setNome(dto.nome());
-        entity.setStatus(dto.status());
-        entity.setCor(dto.cor());
-        return entity;
-    }
 }

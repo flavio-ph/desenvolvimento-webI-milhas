@@ -6,6 +6,7 @@ import com.web.milhas.entity.NotificacaoEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.TipoNotificacao;
 import com.web.milhas.exception.ResourceNotFoundException;
+import com.web.milhas.mapper.NotificacaoMapper; // Novo import
 import com.web.milhas.repository.NotificacaoRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.NotificacaoService;
@@ -22,16 +23,17 @@ public class NotificacaoServiceImpl implements NotificacaoService {
 
     private final NotificacaoRepository notificacaoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final NotificacaoMapper notificacaoMapper; // Injeção do Mapper
 
     @Override
     public List<NotificacaoResponse> listarMinhasNotificacoes(String emailUsuario) {
         UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
-        return notificacaoRepository.findByUsuarioIdOrderByDataEnvioDesc(usuario.getId())
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+        List<NotificacaoEntity> notificacoes = notificacaoRepository.findByUsuarioIdOrderByDataEnvioDesc(usuario.getId());
+
+        // Conversão de lista via Mapper
+        return notificacaoMapper.toResponseList(notificacoes);
     }
 
     @Override
@@ -72,13 +74,4 @@ public class NotificacaoServiceImpl implements NotificacaoService {
         notificacaoRepository.save(notificacao);
     }
 
-    private NotificacaoResponse mapToDTO(NotificacaoEntity entity) {
-        return new NotificacaoResponse(
-                entity.getId(),
-                entity.getMensagem(),
-                entity.isLida(),
-                entity.getTipo(),
-                entity.getDataEnvio()
-        );
-    }
 }

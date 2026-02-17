@@ -7,6 +7,7 @@ import com.web.milhas.entity.SaldoPontosEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.TipoMovimentacao;
 import com.web.milhas.exception.ResourceNotFoundException;
+import com.web.milhas.mapper.SaldoMapper; // Novo import
 import com.web.milhas.repository.SaldoPontosRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.MovimentacaoService;
@@ -25,13 +26,14 @@ public class SaldoServiceImpl implements SaldoService {
     private final SaldoPontosRepository saldoPontosRepository;
     private final UsuarioRepository usuarioRepository;
     private final MovimentacaoService movimentacaoService;
+    private final SaldoMapper saldoMapper;
 
     @Override
     public List<SaldoPontosResponse> consultarSaldos(String emailUsuario) {
         UsuarioEntity usuario = findUsuarioByEmail(emailUsuario);
 
         return saldoPontosRepository.findByUsuarioId(usuario.getId()).stream()
-                .map(this::mapToDTO)
+                .map(saldoMapper::toResponse)
                 .toList();
     }
 
@@ -74,14 +76,6 @@ public class SaldoServiceImpl implements SaldoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
     }
 
-    private SaldoPontosResponse mapToDTO(SaldoPontosEntity entity) {
-        return new SaldoPontosResponse(
-                entity.getId(),
-                entity.getProgramaPontos().getNome(),
-                entity.getTotalPontos()
-        );
-    }
-
     @Transactional
     public void inicializarSaldoPorCartao(UsuarioEntity usuario, ProgramaPontosEntity programa) {
         boolean existe = saldoPontosRepository
@@ -92,6 +86,4 @@ public class SaldoServiceImpl implements SaldoService {
             criarNovoSaldo(usuario, programa);
         }
     }
-
-
 }

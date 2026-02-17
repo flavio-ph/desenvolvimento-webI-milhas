@@ -9,5 +9,6 @@ public record CartaoResponse(
     BigDecimal fatorConversao,
     String nomeBandeira,
     String nomeProgramaPontos,
-    String cor
+    String cor,
+    boolean possuiCompras
 ) {}

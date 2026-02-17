@@ -53,8 +53,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericError(Exception ex, WebRequest req) {
-        log.error("Erro inesperado processando a requisição {}", req.getDescription(false), ex);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", req);
+        log.error("Erro crítico não tratado ao acessar {}: ", req.getDescription(false), ex);
+
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Ocorreu um erro interno. Por favor, tente novamente mais tarde ou entre em contato com o suporte.",
+                req
+        );
     }
 
     private ResponseEntity<Object> buildErrorResponse(HttpStatus status, String message, WebRequest req) {

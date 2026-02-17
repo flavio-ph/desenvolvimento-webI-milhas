@@ -7,8 +7,9 @@ import com.web.milhas.entity.PromocaoEntity;
 import com.web.milhas.entity.SaldoPontosEntity;
 import com.web.milhas.entity.enums.TipoMovimentacao;
 import com.web.milhas.exception.ResourceNotFoundException;
+import com.web.milhas.mapper.MovimentacaoMapper; // Novo import
 import com.web.milhas.repository.MovimentacaoPontosRepository;
-import com.web.milhas.repository.ParticipacaoPromocaoRepository; 
+import com.web.milhas.repository.ParticipacaoPromocaoRepository;
 import com.web.milhas.repository.SaldoPontosRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.MovimentacaoService;
@@ -30,6 +31,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
     private final SaldoPontosRepository saldoPontosRepository;
     private final UsuarioRepository usuarioRepository;
     private final ParticipacaoPromocaoRepository participacaoPromocaoRepository;
+    private final MovimentacaoMapper movimentacaoMapper; // Injeção do Mapper
 
     @Override
     @Transactional
@@ -59,10 +61,10 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
         String filtroPrograma = (programa == null || programa.equals("ALL") || programa.isEmpty()) ? null : programa;
 
-        return movimentacaoRepository.filtrarMovimentacoes(emailUsuario, mes, ano, filtroPrograma)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+        List<MovimentacaoPontosEntity> movimentacoes = movimentacaoRepository.filtrarMovimentacoes(emailUsuario, mes, ano, filtroPrograma);
+
+        // Conversão de lista via Mapper
+        return movimentacaoMapper.toResponseList(movimentacoes);
     }
 
     @Override
@@ -122,14 +124,5 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         return movimentacaoRepository.somarPontosExpirando(usuario.getId(), hoje, dataLimite);
     }
 
-    private MovimentacaoPontosResponse mapToDTO(MovimentacaoPontosEntity mov) {
-        return new MovimentacaoPontosResponse(
-                mov.getId(),
-                mov.getTipo(),
-                mov.getQuantidadePontos(),
-                mov.getDataMovimentacao(),
-                mov.getDescricao(),
-                mov.getSaldoPontos().getProgramaPontos().getNome()
-        );
-    }
+
 }
