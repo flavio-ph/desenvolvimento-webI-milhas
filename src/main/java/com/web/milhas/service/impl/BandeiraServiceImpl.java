@@ -26,7 +26,6 @@ public class BandeiraServiceImpl implements BandeiraService {
                 .stream()
                 .map(entity -> {
                     BandeiraDTO dto = bandeiraMapper.toDTO(entity);
-                    // Preenche a contagem de cartões que o Mapper ignora por padrão
                     return new BandeiraDTO(
                             dto.id(),
                             dto.nome(),

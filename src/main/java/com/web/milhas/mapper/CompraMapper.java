@@ -10,6 +10,6 @@ public interface CompraMapper {
 
     @Mapping(source = "cartao.id", target = "cartaoId")
     @Mapping(source = "cartao.nomePersonalizado", target = "nomeCartao")
-    @Mapping(target = "diasParaCredito", ignore = true) // Calculado dinamicamente no service
+    @Mapping(target = "diasParaCredito", ignore = true)
     CompraResponse toResponse(CompraEntity entity);
 }

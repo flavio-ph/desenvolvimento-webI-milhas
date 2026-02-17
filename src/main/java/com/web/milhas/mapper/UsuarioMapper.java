@@ -22,6 +22,6 @@ public interface UsuarioMapper {
     @Mapping(target = "cartoes", ignore = true)
     @Mapping(target = "saldos", ignore = true)
     @Mapping(target = "notificacoes", ignore = true)
-    @Mapping(target = "senha", ignore = true) // Tratado no service via PasswordEncoder
+    @Mapping(target = "senha", ignore = true)
     UsuarioEntity toEntity(RegisterRequest dto);
 }
