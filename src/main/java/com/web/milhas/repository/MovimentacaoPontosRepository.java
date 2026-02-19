@@ -33,19 +33,11 @@ public interface MovimentacaoPontosRepository extends JpaRepository<Movimentacao
                                         @Param("limite") LocalDate limite);
 
     @Query("SELECT m FROM MovimentacaoPontosEntity m " +
-            "JOIN FETCH m.saldoPontos s " +
-            "JOIN FETCH s.programaPontos " +
-            "WHERE s.usuario.email = :email " +
-            "AND (:mes IS NULL OR MONTH(m.dataMovimentacao) = :mes) " +
-            "AND (:ano IS NULL OR YEAR(m.dataMovimentacao) = :ano) " +
-            "AND (:programaNome IS NULL OR s.programaPontos.nome = :programaNome) " +
-            "ORDER BY m.dataMovimentacao DESC")
-    List<MovimentacaoPontosEntity> filtrarMovimentacoes(
-            @Param("email") String email,
-            @Param("mes") Integer mes,
-            @Param("ano") Integer ano,
-            @Param("programaNome") String programaNome
-    );
+       "JOIN FETCH m.saldoPontos s " +
+       "JOIN FETCH s.programaPontos " +
+       "WHERE s.usuario.id = :usuarioId " +
+       "ORDER BY m.dataMovimentacao DESC")
+List<MovimentacaoPontosEntity> findByUsuarioIdWithRelationships(@Param("usuarioId") Long usuarioId);
 
         @Query(value = "SELECT to_char(m.data_movimentacao, 'DD/MM') as mes, " +
                "SUM(m.quantidade_pontos) as pontos " +

@@ -7,11 +7,15 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
@@ -30,11 +34,21 @@ public class JwtTokenProvider {
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String gerarToken(String username) {
+    public String gerarToken(Authentication authentication) {
+        String username = authentication.getName();
         Date agora = new Date();
         Date expiracao = new Date(agora.getTime() + expirationMillis);
 
+        // Extrai as roles/authorities e junta em uma string separada por vírgulas
+        String roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles); 
+
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(agora)
                 .setExpiration(expiracao)
@@ -46,14 +60,13 @@ public class JwtTokenProvider {
         return getClaims(token).getSubject();
     }
 
-    public boolean validarToken(String token, UserDetails userDetails) {
+    public boolean validarToken(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
         final String username = extrairUsername(token);
         return (username.equals(userDetails.getUsername()) && !estaExpirado(token));
     }
 
     private boolean estaExpirado(String token) {
-        Date expiration = getClaims(token).getExpiration();
-        return expiration.before(new Date());
+        return getClaims(token).getExpiration().before(new Date());
     }
 
     private Claims getClaims(String token) {

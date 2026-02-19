@@ -31,14 +31,14 @@ public class AuthController {
     private UsuarioService usuarioService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequestDTO req) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.email(), req.senha())
-        );
+public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequestDTO req) {
+    Authentication auth = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(req.email(), req.senha())
+    );
 
-        String token = jwtTokenProvider.gerarToken(auth.getName());
-        return ResponseEntity.ok(new AuthResponse(token));
-    }
+    String token = jwtTokenProvider.gerarToken(auth); 
+    return ResponseEntity.ok(new AuthResponse(token));
+}
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)

@@ -17,7 +17,6 @@ import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +30,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final UsuarioRepository usuarioRepository;
     private final CompraRepository compraRepository;
     private final MovimentacaoPontosRepository movimentacaoRepository;
-    private final MovimentacaoMapper movimentacaoMapper; // Injeção do Mapper
+    private final MovimentacaoMapper movimentacaoMapper;
 
     @Override
     public DashboardResponseDTO getDashboardData(String emailUsuario) {
@@ -48,21 +47,23 @@ public class DashboardServiceImpl implements DashboardService {
 
         BigDecimal totalPendentes = compraRepository.somarPontosPorStatus(usuario.getId(), StatusCompra.PENDENTE);
         LocalDate proximaData = compraRepository.findProximaDataCredito(usuario.getId(), StatusCompra.PENDENTE);
-
+        
         Integer diasParaCredito = null;
         if (proximaData != null) {
             diasParaCredito = (int) ChronoUnit.DAYS.between(hoje, proximaData);
-            if (diasParaCredito < 0) diasParaCredito = 0;
+            if (diasParaCredito < 0) diasParaCredito = 0; 
         }
 
         ResumoPendentesDTO resumoPendentes = new ResumoPendentesDTO(totalPendentes, diasParaCredito);
 
+        // Otimização N+1: Utilizando o método com JOIN FETCH para carregar relacionamentos em uma única consulta
         List<MovimentacaoPontosResponse> todas = new ArrayList<>(
                 movimentacaoMapper.toResponseList(
-                        movimentacaoRepository.findBySaldoPontosUsuarioIdOrderByDataMovimentacaoDesc(usuario.getId())
+                        movimentacaoRepository.findByUsuarioIdWithRelationships(usuario.getId())
                 )
         );
 
+        // Adição das compras pendentes à lista de movimentações para visualização no dashboard
         compraRepository.findByCartaoUsuarioId(usuario.getId()).stream()
                 .filter(c -> c.getStatus() == StatusCompra.PENDENTE)
                 .forEach(c -> todas.add(new MovimentacaoPontosResponse(
@@ -77,11 +78,11 @@ public class DashboardServiceImpl implements DashboardService {
 
         List<Object[]> dadosGrafico = movimentacaoRepository.findHistoricoAcumuloMensal(usuario.getId());
         List<HistoricoMensalDTO> historicoPontos = dadosGrafico.stream()
-                .map(obj -> new HistoricoMensalDTO(
-                        (String) obj[0],
-                        (BigDecimal) obj[1]
-                ))
-                .toList();
+            .map(obj -> new HistoricoMensalDTO(
+                    (String) obj[0], 
+                    (BigDecimal) obj[1]
+            ))
+            .toList();
 
         return new DashboardResponseDTO(pontosPorCartao, prazoMedio, expirando, resumoPendentes, ultimas, historicoPontos);
     }
