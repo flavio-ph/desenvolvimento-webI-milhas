@@ -5,6 +5,7 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record PromocaoRequest(
@@ -12,8 +13,8 @@ public record PromocaoRequest(
         String titulo,
         String descricao,
         String urlPromocao,
-        @NotNull 
-        Double bonusPorcentagem,
+        @NotNull
+        BigDecimal bonusPorcentagem,
         @NotNull(message = "A data de início é obrigatória") 
         LocalDate dataInicio,
         @NotNull @FutureOrPresent 

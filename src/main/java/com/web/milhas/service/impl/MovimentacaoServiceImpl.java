@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -88,10 +89,9 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         if (promocaoOpt.isPresent()) {
             PromocaoEntity promo = promocaoOpt.get();
 
-            BigDecimal bonus = BigDecimal.valueOf(promo.getBonusPorcentagem());
-
+            BigDecimal bonus = promo.getBonusPorcentagem();
             BigDecimal multiplicador = BigDecimal.ONE.add(
-                    bonus.divide(BigDecimal.valueOf(100))
+                    bonus.divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP)
             );
 
             pontosFinais = pontosBase.multiply(multiplicador);

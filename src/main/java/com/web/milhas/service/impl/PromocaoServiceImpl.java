@@ -29,7 +29,6 @@ public class PromocaoServiceImpl implements PromocaoService {
     private final UsuarioRepository usuarioRepository;
     private final PromocaoMapper promocaoMapper; // Injeção do Mapper
 
-
     @Override
     public List<PromocaoResponse> listarAtivas() {
         return promocaoRepository.findAll().stream()

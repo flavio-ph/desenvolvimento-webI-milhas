@@ -1,5 +1,6 @@
 package com.web.milhas.dto.promocao;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record PromocaoResponse(
@@ -7,7 +8,7 @@ public record PromocaoResponse(
         String titulo,
         String descricao,
         String urlPromocao,
-        Double bonusPorcentagem,
+        BigDecimal bonusPorcentagem,
         LocalDate dataInicio,
         LocalDate dataFim,
         String nomeProgramaPontos,

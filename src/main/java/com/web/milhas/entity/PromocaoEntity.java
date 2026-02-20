@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -34,8 +35,8 @@ public class PromocaoEntity {
 
     private LocalDate dataFim;
 
-    @Column(name = "bonus_porcentagem")
-    private Double bonusPorcentagem;
+    @Column(name = "bonus_porcentagem", precision = 10, scale = 2)
+    private BigDecimal bonusPorcentagem;
 
     @ManyToOne
     @JoinColumn(name = "programa_pontos_id", nullable = false)
