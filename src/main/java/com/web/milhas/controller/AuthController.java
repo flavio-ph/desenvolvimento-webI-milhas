@@ -6,7 +6,7 @@ import com.web.milhas.dto.auth.PasswordResetRequest;
 import com.web.milhas.dto.auth.RegisterRequest;
 import com.web.milhas.dto.auth.UpdatePasswordRequest;
 import com.web.milhas.security.JwtTokenProvider;
-import com.web.milhas.service.UsuarioService; 
+import com.web.milhas.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,14 +29,13 @@ public class AuthController {
     private UsuarioService usuarioService;
 
     @PostMapping("/login")
-public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequestDTO req) {
-    Authentication auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(req.email(), req.senha())
-    );
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequestDTO req) {
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(req.email(), req.senha()));
 
-    String token = jwtTokenProvider.gerarToken(auth); 
-    return ResponseEntity.ok(new AuthResponse(token));
-}
+        String token = jwtTokenProvider.gerarToken(auth);
+        return ResponseEntity.ok(new AuthResponse(token));
+    }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -47,9 +44,9 @@ public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequestDTO re
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody PasswordResetRequest req) {
-        String token = usuarioService.requestPasswordReset(req.email());
-        return ResponseEntity.ok(Map.of("resetToken", token));
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void forgotPassword(@Valid @RequestBody PasswordResetRequest req) {
+        usuarioService.requestPasswordReset(req.email());
     }
 
     @PostMapping("/reset-password")

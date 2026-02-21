@@ -7,6 +7,10 @@ import java.math.BigDecimal;
 
 public interface CompraService {
     CompraResponse registrarCompra(CompraRequest dto, String emailUsuario);
+
     ResumoPendentesDTO calcularResumoPendentes(String emailUsuario);
+
     void creditarCompra(Long compraId);
+
+    void creditarCompra(Long compraId, String emailUsuario);
 }

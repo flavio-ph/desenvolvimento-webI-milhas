@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -43,9 +44,12 @@ public class FileUploadServiceImpl implements FileUploadService {
         try {
             Files.createDirectories(this.storageLocation);
         } catch (Exception ex) {
-            throw new RuntimeException("Não foi possível criar o diretório para upload em: " + this.storageLocation, ex);
+            throw new RuntimeException("Não foi possível criar o diretório para upload em: " + this.storageLocation,
+                    ex);
         }
     }
+
+    private static final Set<String> EXTENSOES_COMPROVANTE_PERMITIDAS = Set.of(".pdf", ".jpg", ".jpeg", ".png");
 
     @Override
     @Transactional
@@ -62,14 +66,26 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         String nomeOriginal = StringUtils.cleanPath(arquivo.getOriginalFilename());
         if (nomeOriginal.contains("..")) {
-            throw new RuntimeException("Nome de arquivo inválido: " + nomeOriginal);
+            throw new RuntimeException("Nome de arquivo inválido.");
         }
 
         String extensao = "";
         int i = nomeOriginal.lastIndexOf('.');
         if (i > 0) {
-            extensao = nomeOriginal.substring(i);
+            extensao = nomeOriginal.substring(i).toLowerCase();
         }
+
+        if (!EXTENSOES_COMPROVANTE_PERMITIDAS.contains(extensao)) {
+            throw new IllegalArgumentException(
+                    "Tipo de arquivo não permitido. Use: pdf, jpg, jpeg ou png.");
+        }
+
+        String contentType = arquivo.getContentType();
+        if (contentType == null ||
+                (!contentType.equals("application/pdf") && !contentType.startsWith("image/"))) {
+            throw new IllegalArgumentException("Content-Type inválido. Envie uma imagem ou PDF.");
+        }
+
         String nomeUnico = UUID.randomUUID().toString() + extensao;
 
         try {
@@ -85,7 +101,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             comprovanteRepository.save(comprovante);
 
         } catch (IOException ex) {
-            throw new RuntimeException("Erro ao salvar o arquivo " + nomeOriginal, ex);
+            throw new RuntimeException("Erro ao salvar o comprovante.", ex);
         }
     }
 }

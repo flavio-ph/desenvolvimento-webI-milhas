@@ -97,4 +97,26 @@ public class CompraServiceImpl implements CompraService {
         compraRepository.save(compra);
         movimentacaoService.gerarCreditoCompra(compra);
     }
+
+    @Override
+    @Transactional
+    public void creditarCompra(Long compraId, String emailUsuario) {
+        UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        CompraEntity compra = compraRepository.findById(compraId)
+                .orElseThrow(() -> new ResourceNotFoundException("Compra não encontrada."));
+
+        if (!compra.getCartao().getUsuario().getId().equals(usuario.getId())) {
+            throw new ResourceNotFoundException("Compra não pertence ao usuário.");
+        }
+
+        if (compra.getStatus() == StatusCompra.CREDITADO) {
+            throw new IllegalStateException("Esta compra já foi creditada.");
+        }
+
+        compra.setStatus(StatusCompra.CREDITADO);
+        compraRepository.save(compra);
+        movimentacaoService.gerarCreditoCompra(compra);
+    }
 }

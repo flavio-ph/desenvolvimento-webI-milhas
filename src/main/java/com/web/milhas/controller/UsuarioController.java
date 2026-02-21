@@ -5,6 +5,7 @@ import com.web.milhas.dto.usuario.UsuarioUpdateRequest;
 import com.web.milhas.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
+@Slf4j
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -32,12 +34,12 @@ public class UsuarioController {
         String userEmail = userDetails.getUsername();
         return ResponseEntity.ok(usuarioService.updateProfile(userEmail, dto));
     }
-    
 
     @GetMapping("/me/2fa/generate")
-    public ResponseEntity<Void> generate2FA(@AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
+    public ResponseEntity<Void> generate2FA(
+            @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
         String code = usuarioService.generateTwoFactorSetup(userDetails.getUsername());
-        System.out.println("Código 2FA gerado: " + code);
+        log.info("[2FA] Código gerado para o usuário: {}. TODO: enviar por e-mail/SMS.", userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 
@@ -45,19 +47,21 @@ public class UsuarioController {
     public ResponseEntity<Void> verify2FA(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails,
             @RequestBody java.util.Map<String, Integer> payload) {
-        
+
         int code = payload.get("code");
         boolean isValid = usuarioService.verifyTwoFactor(userDetails.getUsername(), code);
-        
+
         if (isValid) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().build();
         }
     }
-    
+
     @PostMapping("/me/2fa/disable")
-    public ResponseEntity<Void> disable2FA(@AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
+    public ResponseEntity<Void> disable2FA(
+            @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
+        usuarioService.disableTwoFactor(userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 
@@ -65,7 +69,7 @@ public class UsuarioController {
     public ResponseEntity<Void> uploadFoto(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam("foto") org.springframework.web.multipart.MultipartFile foto) {
-        
+
         usuarioService.uploadFotoPerfil(userDetails.getUsername(), foto);
         return ResponseEntity.ok().build();
     }

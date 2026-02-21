@@ -29,7 +29,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.Random;
+import java.security.SecureRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -63,11 +63,20 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponse updateProfile(String userEmail, UsuarioUpdateRequest dto) {
         UsuarioEntity usuario = findUsuarioByEmail(userEmail);
 
-        if (dto.nome() != null) usuario.setNome(dto.nome());
-        if (dto.telefone() != null) usuario.setTelefone(dto.telefone());
-        if (dto.cpf() != null) usuario.setCpf(dto.cpf());
+        if (dto.nome() != null)
+            usuario.setNome(dto.nome());
+        if (dto.telefone() != null)
+            usuario.setTelefone(dto.telefone());
+        if (dto.cpf() != null)
+            usuario.setCpf(dto.cpf());
 
         if (dto.senha() != null && !dto.senha().isBlank()) {
+            if (dto.senhaAtual() == null || dto.senhaAtual().isBlank()) {
+                throw new InvalidPasswordException("A senha atual é obrigatória para alterar a senha.");
+            }
+            if (!passwordEncoder.matches(dto.senhaAtual(), usuario.getSenha())) {
+                throw new InvalidPasswordException("A senha atual está incorreta.");
+            }
             usuario.setSenha(passwordEncoder.encode(dto.senha()));
         }
         if (dto.fotoPerfil() != null && !dto.fotoPerfil().isBlank()) {
@@ -86,7 +95,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public String requestPasswordReset(String email) {
+    public void requestPasswordReset(String email) {
         UsuarioEntity usuario = findUsuarioByEmail(email);
 
         String token = UUID.randomUUID().toString();
@@ -94,9 +103,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setResetPasswordTokenExpiry(LocalDateTime.now().plusHours(1));
         usuarioRepository.save(usuario);
 
-        log.info("Token de reset gerado para {}: {}", email, token);
-
-        return token;
+        // TODO: enviar token por e-mail (Spring Mail) em vez de logar
+        log.info("[RESET-PASSWORD] Token gerado para usuário {}. Integrar com serviço de e-mail.", email);
     }
 
     @Override
@@ -127,7 +135,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public String generateTwoFactorSetup(String email) {
         UsuarioEntity usuario = findUsuarioByEmail(email);
 
-        String code = String.valueOf(new Random().nextInt(900000) + 100000);
+        String code = String.valueOf(new SecureRandom().nextInt(900000) + 100000);
 
         usuario.setVerificationCode(code);
         usuario.setVerificationCodeExpiry(LocalDateTime.now().plusMinutes(5));
@@ -162,11 +170,39 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
+    public void disableTwoFactor(String email) {
+        UsuarioEntity usuario = findUsuarioByEmail(email);
+        usuario.setTwoFactorEnabled(false);
+        usuario.setVerificationCode(null);
+        usuario.setVerificationCodeExpiry(null);
+        usuarioRepository.save(usuario);
+        log.info("[2FA] 2FA desabilitado para o usuário: {}", email);
+    }
+
+    private static final java.util.Set<String> EXTENSOES_IMAGEM_PERMITIDAS = java.util.Set.of(".jpg", ".jpeg", ".png",
+            ".webp");
+
+    @Override
+    @Transactional
     public void uploadFotoPerfil(String email, MultipartFile arquivo) {
         UsuarioEntity usuario = findUsuarioByEmail(email);
 
         String nomeOriginal = StringUtils.cleanPath(arquivo.getOriginalFilename());
-        String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf('.'));
+        if (nomeOriginal == null || nomeOriginal.isBlank() || !nomeOriginal.contains(".")) {
+            throw new IllegalArgumentException("Nome de arquivo inválido.");
+        }
+
+        String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf('.')).toLowerCase();
+        if (!EXTENSOES_IMAGEM_PERMITIDAS.contains(extensao)) {
+            throw new IllegalArgumentException(
+                    "Tipo de arquivo não permitido. Use: jpg, jpeg, png ou webp.");
+        }
+
+        String contentType = arquivo.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Content-Type inválido. Envie uma imagem válida.");
+        }
+
         String nomeUnico = UUID.randomUUID().toString() + extensao;
 
         try {
@@ -176,7 +212,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario.setFotoPerfil(nomeUnico);
             usuarioRepository.save(usuario);
         } catch (IOException ex) {
-            throw new RuntimeException("Erro ao salvar foto de perfil", ex);
+            throw new RuntimeException("Erro ao salvar foto de perfil.", ex);
         }
     }
 }

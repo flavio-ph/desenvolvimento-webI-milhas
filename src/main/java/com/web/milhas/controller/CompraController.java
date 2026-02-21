@@ -3,8 +3,8 @@ package com.web.milhas.controller;
 import com.web.milhas.dto.compra.CompraRequest;
 import com.web.milhas.dto.compra.CompraResponse;
 import com.web.milhas.dto.dashboard.ResumoPendentesDTO;
-import com.web.milhas.service.CompraService; 
-import com.web.milhas.service.FileUploadService; 
+import com.web.milhas.service.CompraService;
+import com.web.milhas.service.FileUploadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -46,14 +46,16 @@ public class CompraController {
 
     @GetMapping("/pendentes/total")
     public ResponseEntity<ResumoPendentesDTO> getResumoPendentes(@AuthenticationPrincipal UserDetails userDetails) {
-    
+
         ResumoPendentesDTO resumo = compraService.calcularResumoPendentes(userDetails.getUsername());
         return ResponseEntity.ok(resumo);
     }
 
     @PutMapping("/{id}/creditar")
-    public ResponseEntity<Void> creditar(@PathVariable Long id) {
-        compraService.creditarCompra(id);
+    public ResponseEntity<Void> creditar(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id) {
+        compraService.creditarCompra(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 }
