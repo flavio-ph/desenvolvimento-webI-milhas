@@ -6,11 +6,13 @@ import com.web.milhas.entity.NotificacaoEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.TipoNotificacao;
 import com.web.milhas.exception.ResourceNotFoundException;
-import com.web.milhas.mapper.NotificacaoMapper; // Novo import
+import com.web.milhas.mapper.NotificacaoMapper;
 import com.web.milhas.repository.NotificacaoRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.NotificacaoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,19 +28,20 @@ public class NotificacaoServiceImpl implements NotificacaoService {
     private final NotificacaoMapper notificacaoMapper; // Injeção do Mapper
 
     @Override
-    public List<NotificacaoResponse> listarMinhasNotificacoes(String emailUsuario) {
+    public Page<NotificacaoResponse> listarMinhasNotificacoes(String emailUsuario, Pageable pageable) {
         UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
-        List<NotificacaoEntity> notificacoes = notificacaoRepository.findByUsuarioIdOrderByDataEnvioDesc(usuario.getId());
+        Page<NotificacaoEntity> notificacoes = notificacaoRepository
+                .findByUsuarioIdOrderByDataEnvioDesc(usuario.getId(), pageable);
 
-        // Conversão de lista via Mapper
-        return notificacaoMapper.toResponseList(notificacoes);
+        return notificacoes.map(notificacaoMapper::toResponse);
     }
 
     @Override
     @Transactional
-    public void criarNotificacao(UsuarioEntity destinatario, String mensagem, TipoNotificacao tipo, CompraEntity compraRelacionada) {
+    public void criarNotificacao(UsuarioEntity destinatario, String mensagem, TipoNotificacao tipo,
+            CompraEntity compraRelacionada) {
         NotificacaoEntity notificacao = new NotificacaoEntity();
         notificacao.setUsuario(destinatario);
         notificacao.setMensagem(mensagem);

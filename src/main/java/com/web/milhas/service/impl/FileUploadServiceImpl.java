@@ -8,6 +8,7 @@ import com.web.milhas.repository.CompraRepository;
 import com.web.milhas.repository.ComprovanteCompraRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.FileUploadService;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +51,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     private static final Set<String> EXTENSOES_COMPROVANTE_PERMITIDAS = Set.of(".pdf", ".jpg", ".jpeg", ".png");
+    private static final Set<String> MIME_TYPES_PERMITIDOS = Set.of(
+            "application/pdf", "image/jpeg", "image/png");
+    private static final Tika TIKA = new Tika();
 
     @Override
     @Transactional
@@ -80,10 +84,22 @@ public class FileUploadServiceImpl implements FileUploadService {
                     "Tipo de arquivo não permitido. Use: pdf, jpg, jpeg ou png.");
         }
 
+        // Validação de MIME type declarado (Content-Type do cliente)
         String contentType = arquivo.getContentType();
         if (contentType == null ||
                 (!contentType.equals("application/pdf") && !contentType.startsWith("image/"))) {
             throw new IllegalArgumentException("Content-Type inválido. Envie uma imagem ou PDF.");
+        }
+
+        // Validação real de MIME type via Apache Tika (magic bytes)
+        try {
+            String mimeDetectado = TIKA.detect(arquivo.getBytes());
+            if (!MIME_TYPES_PERMITIDOS.contains(mimeDetectado)) {
+                throw new IllegalArgumentException(
+                        "Conteúdo do arquivo não corresponde ao tipo permitido.");
+            }
+        } catch (IOException ex) {
+            throw new IllegalArgumentException("Não foi possível validar o conteúdo do arquivo.");
         }
 
         String nomeUnico = UUID.randomUUID().toString() + extensao;

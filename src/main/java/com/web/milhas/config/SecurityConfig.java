@@ -1,6 +1,5 @@
 package com.web.milhas.config;
 
-import com.web.milhas.config.RateLimitFilter;
 import com.web.milhas.security.JwtAuthenticationFilter;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -41,9 +40,12 @@ public class SecurityConfig {
         @Autowired
         private Environment environment;
 
+        private boolean isProd() {
+                return Arrays.asList(environment.getActiveProfiles()).contains("prod");
+        }
+
         private boolean isSwaggerPublic() {
-                // Swagger é público em todos os profiles EXCETO 'prod'
-                return !Arrays.asList(environment.getActiveProfiles()).contains("prod");
+                return !isProd();
         }
 
         @Bean
@@ -58,10 +60,20 @@ public class SecurityConfig {
                                                 .frameOptions(f -> f.deny())
                                                 .xssProtection(x -> {
                                                 })
+                                                .httpStrictTransportSecurity(hsts -> hsts
+                                                                .includeSubDomains(true)
+                                                                .maxAgeInSeconds(31536000))
                                                 .referrerPolicy(r -> r
                                                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)))
+                                .requiresChannel(channel -> {
+                                        if (isProd()) {
+                                                // Em produção, força HTTPS inclusive via proxy (X-Forwarded-Proto)
+                                                channel.anyRequest().requiresSecure();
+                                        }
+                                })
                                 .authorizeHttpRequests(auth -> {
                                         auth.requestMatchers("/auth/**").permitAll();
+                                        auth.requestMatchers("/actuator/health").permitAll();
                                         if (isSwaggerPublic()) {
                                                 auth.requestMatchers(
                                                                 "/v3/api-docs/**",
