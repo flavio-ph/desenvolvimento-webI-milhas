@@ -4,6 +4,8 @@ import com.web.milhas.entity.MovimentacaoPontosEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,16 +52,16 @@ List<MovimentacaoPontosEntity> findByUsuarioIdWithRelationships(@Param("usuarioI
                nativeQuery = true)
         List<Object[]> findHistoricoAcumuloMensal(@Param("usuarioId") Long usuarioId);
 
-        @Query("SELECT m FROM MovimentacaoPontosEntity m " +
-                "WHERE m.saldoPontos.usuario.email = :email " +
-                "AND (:mes IS NULL OR MONTH(m.dataMovimentacao) = :mes) " +
-                "AND (:ano IS NULL OR YEAR(m.dataMovimentacao) = :ano) " +
-                "AND (:programaNome IS NULL OR m.saldoPontos.programaPontos.nome = :programaNome) " +
-                "ORDER BY m.dataMovimentacao DESC")
-        List<MovimentacaoPontosEntity> filtrarMovimentacoes(
-                @Param("email") String email,
-                @Param("mes") Integer mes,
-                @Param("ano") Integer ano,
-                @Param("programaNome") String programaNome
-        );
+    @Query("SELECT m FROM MovimentacaoPontosEntity m " +
+            "WHERE m.saldoPontos.usuario.email = :email " +
+            "AND (:mes IS NULL OR MONTH(m.dataMovimentacao) = :mes) " +
+            "AND (:ano IS NULL OR YEAR(m.dataMovimentacao) = :ano) " +
+            "AND (:programaNome IS NULL OR m.saldoPontos.programaPontos.nome = :programaNome)")
+    Page<MovimentacaoPontosEntity> filtrarMovimentacoes(
+            @Param("email") String email,
+            @Param("mes") Integer mes,
+            @Param("ano") Integer ano,
+            @Param("programaNome") String programaNome,
+            Pageable pageable // Novo parâmetro
+    );
 }

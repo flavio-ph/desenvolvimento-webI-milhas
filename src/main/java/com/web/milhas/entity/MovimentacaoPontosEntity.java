@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@EntityListeners(AuditingEntityListener.class)
 public class MovimentacaoPontosEntity {
 
     @Id
@@ -32,6 +35,7 @@ public class MovimentacaoPontosEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal quantidadePontos;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime dataMovimentacao;
 

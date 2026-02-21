@@ -12,6 +12,8 @@ import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.MovimentacaoService;
 import com.web.milhas.service.RelatorioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable; // Import da paginação
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
@@ -32,9 +34,11 @@ public class RelatorioServiceImpl implements RelatorioService {
 
     @Override
     public byte[] gerarCsvMovimentacoes(String emailUsuario) {
-        List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(
-                emailUsuario, null, null, null, null
+        // Extrai a lista completa desativando a paginação via unpaged()
+        Page<MovimentacaoPontosResponse> pagina = movimentacaoService.listarMovimentacoes(
+                emailUsuario, null, null, null, null, Pageable.unpaged()
         );
+        List<MovimentacaoPontosResponse> movimentacoes = pagina.getContent();
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              OutputStreamWriter osw = new OutputStreamWriter(baos);
@@ -64,9 +68,11 @@ public class RelatorioServiceImpl implements RelatorioService {
     public byte[] gerarPdfMovimentacoes(String emailUsuario) {
         UsuarioEntity usuario = buscarUsuarioPorEmail(emailUsuario);
 
-        List<MovimentacaoPontosResponse> movimentacoes = movimentacaoService.listarMovimentacoes(
-                emailUsuario, null, null, null, null
+        // Extrai a lista completa desativando a paginação via unpaged()
+        Page<MovimentacaoPontosResponse> pagina = movimentacaoService.listarMovimentacoes(
+                emailUsuario, null, null, null, null, Pageable.unpaged()
         );
+        List<MovimentacaoPontosResponse> movimentacoes = pagina.getContent();
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4);

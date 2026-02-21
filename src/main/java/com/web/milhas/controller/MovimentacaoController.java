@@ -3,6 +3,10 @@ package com.web.milhas.controller;
 import com.web.milhas.dto.movimentacao.MovimentacaoPontosResponse;
 import com.web.milhas.service.MovimentacaoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,21 +36,18 @@ public class MovimentacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MovimentacaoPontosResponse>> listarMinhasMovimentacoes(
-            @AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<Page<MovimentacaoPontosResponse>> listarMovimentacoes(
+            @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails,
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano,
             @RequestParam(required = false) String programa,
-            @RequestParam(required = false) String status) {
+            @RequestParam(required = false) String status,
+            @PageableDefault(size = 10, sort = "dataMovimentacao", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        List<MovimentacaoPontosResponse> historico = movimentacaoService.listarMovimentacoes(
-                userDetails.getUsername(),
-                mes,
-                ano,
-                programa,
-                status
-        );
-        return ResponseEntity.ok(historico);
+        Page<MovimentacaoPontosResponse> response = movimentacaoService.listarMovimentacoes(
+                userDetails.getUsername(), mes, ano, programa, status, pageable);
+
+        return ResponseEntity.ok(response);
     }
 
 

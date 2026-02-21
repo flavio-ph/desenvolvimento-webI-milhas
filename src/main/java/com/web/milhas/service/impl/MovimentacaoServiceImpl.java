@@ -14,6 +14,8 @@ import com.web.milhas.repository.SaldoPontosRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.MovimentacaoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,19 +44,19 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         mov.setTipo(tipo);
         mov.setQuantidadePontos(quantidade);
         mov.setDescricao(descricao);
-        mov.setDataMovimentacao(LocalDateTime.now());
         mov.setCompra(compraOrigem);
 
         movimentacaoRepository.save(mov);
     }
 
     @Override
-    public List<MovimentacaoPontosResponse> listarMovimentacoes(
+    public Page<MovimentacaoPontosResponse> listarMovimentacoes(
             String emailUsuario,
             Integer mes,
             Integer ano,
             String programa,
-            String status) {
+            String status,
+            Pageable pageable) {
 
         if (!usuarioRepository.existsByEmail(emailUsuario)) {
             throw new ResourceNotFoundException("Usuário não encontrado.");
@@ -62,10 +64,12 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
         String filtroPrograma = (programa == null || programa.equals("ALL") || programa.isEmpty()) ? null : programa;
 
-        List<MovimentacaoPontosEntity> movimentacoes = movimentacaoRepository.filtrarMovimentacoes(emailUsuario, mes, ano, filtroPrograma);
+        // Recebe a página de entidades do banco
+        Page<MovimentacaoPontosEntity> paginaEntidades = movimentacaoRepository.filtrarMovimentacoes(
+                emailUsuario, mes, ano, filtroPrograma, pageable);
 
-        // Conversão de lista via Mapper
-        return movimentacaoMapper.toResponseList(movimentacoes);
+        // Mapeia diretamente para a página de DTOs utilizando a referência do MapStruct
+        return paginaEntidades.map(movimentacaoMapper::toResponse);
     }
 
     @Override
@@ -104,7 +108,6 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         MovimentacaoPontosEntity mov = new MovimentacaoPontosEntity();
         mov.setTipo(TipoMovimentacao.ACUMULO);
         mov.setQuantidadePontos(pontosFinais);
-        mov.setDataMovimentacao(LocalDateTime.now());
         mov.setDescricao(descricaoFinal);
         mov.setDataValidade(LocalDate.now().plusMonths(24));
         mov.setSaldoPontos(saldo);

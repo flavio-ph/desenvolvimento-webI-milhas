@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@EntityListeners(AuditingEntityListener.class)
 public class UsuarioEntity implements UserDetails {
 
     @Id
@@ -45,7 +48,7 @@ public class UsuarioEntity implements UserDetails {
     @Column
     private String cpf;
 
-    @CreationTimestamp
+    @CreatedDate
     @Column(name = "data_cadastro", updatable = false)
     private LocalDateTime dataCadastro;
 
