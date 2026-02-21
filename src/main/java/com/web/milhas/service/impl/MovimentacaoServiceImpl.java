@@ -7,7 +7,7 @@ import com.web.milhas.entity.PromocaoEntity;
 import com.web.milhas.entity.SaldoPontosEntity;
 import com.web.milhas.entity.enums.TipoMovimentacao;
 import com.web.milhas.exception.ResourceNotFoundException;
-import com.web.milhas.mapper.MovimentacaoMapper; // Novo import
+import com.web.milhas.mapper.MovimentacaoMapper;
 import com.web.milhas.repository.MovimentacaoPontosRepository;
 import com.web.milhas.repository.ParticipacaoPromocaoRepository;
 import com.web.milhas.repository.SaldoPontosRepository;
@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,7 +32,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
     private final SaldoPontosRepository saldoPontosRepository;
     private final UsuarioRepository usuarioRepository;
     private final ParticipacaoPromocaoRepository participacaoPromocaoRepository;
-    private final MovimentacaoMapper movimentacaoMapper; // Injeção do Mapper
+    private final MovimentacaoMapper movimentacaoMapper;
 
     @Override
     @Transactional
@@ -64,11 +62,9 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
         String filtroPrograma = (programa == null || programa.equals("ALL") || programa.isEmpty()) ? null : programa;
 
-        // Recebe a página de entidades do banco
         Page<MovimentacaoPontosEntity> paginaEntidades = movimentacaoRepository.filtrarMovimentacoes(
                 emailUsuario, mes, ano, filtroPrograma, pageable);
 
-        // Mapeia diretamente para a página de DTOs utilizando a referência do MapStruct
         return paginaEntidades.map(movimentacaoMapper::toResponse);
     }
 
@@ -80,8 +76,15 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         Long programaId = compra.getCartao().getProgramaPontos().getId();
         LocalDate dataReferencia = compra.getDataCompra();
 
+        // Correção aplicada: Inicialização dinâmica (Lazy) do saldo de pontos caso não exista
         SaldoPontosEntity saldo = saldoPontosRepository.findByUsuarioIdAndProgramaPontosId(usuarioId, programaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Saldo de pontos não encontrado para o usuário/programa."));
+                .orElseGet(() -> {
+                    SaldoPontosEntity novoSaldo = new SaldoPontosEntity();
+                    novoSaldo.setUsuario(compra.getCartao().getUsuario());
+                    novoSaldo.setProgramaPontos(compra.getCartao().getProgramaPontos());
+                    novoSaldo.setTotalPontos(BigDecimal.ZERO);
+                    return saldoPontosRepository.save(novoSaldo);
+                });
 
         BigDecimal pontosBase = compra.getPontosCalculados();
         BigDecimal pontosFinais = pontosBase;
@@ -126,6 +129,4 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
         return movimentacaoRepository.somarPontosExpirando(usuario.getId(), hoje, dataLimite);
     }
-
-
 }
