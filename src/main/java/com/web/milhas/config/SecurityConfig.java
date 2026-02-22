@@ -31,72 +31,73 @@ import java.util.Arrays;
 @SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
 public class SecurityConfig {
 
-        @Autowired
-        private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-        @Autowired
-        private RateLimitFilter rateLimitFilter;
+    @Autowired
+    private RateLimitFilter rateLimitFilter;
 
-        @Autowired
-        private Environment environment;
+    @Autowired
+    private Environment environment;
 
-        private boolean isProd() {
-                return Arrays.asList(environment.getActiveProfiles()).contains("prod");
-        }
+    private boolean isProd() {
+        return Arrays.asList(environment.getActiveProfiles()).contains("prod");
+    }
 
-        private boolean isSwaggerPublic() {
-                return !isProd();
-        }
+    private boolean isSwaggerPublic() {
+        return !isProd();
+    }
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                http
-                                .cors(cors -> cors.configure(http))
-                                .csrf(csrf -> csrf.disable())
-                                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .headers(headers -> headers
-                                                .contentTypeOptions(c -> {
-                                                })
-                                                .frameOptions(f -> f.deny())
-                                                .xssProtection(x -> {
-                                                })
-                                                .httpStrictTransportSecurity(hsts -> hsts
-                                                                .includeSubDomains(true)
-                                                                .maxAgeInSeconds(31536000))
-                                                .referrerPolicy(r -> r
-                                                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)))
-                                .requiresChannel(channel -> {
-                                        if (isProd()) {
-                                                // Em produção, força HTTPS inclusive via proxy (X-Forwarded-Proto)
-                                                channel.anyRequest().requiresSecure();
-                                        }
-                                })
-                                .authorizeHttpRequests(auth -> {
-                                        auth.requestMatchers("/auth/**").permitAll();
-                                        auth.requestMatchers("/actuator/health").permitAll();
-                                        if (isSwaggerPublic()) {
-                                                auth.requestMatchers(
-                                                                "/v3/api-docs/**",
-                                                                "/swagger-ui/**",
-                                                                "/swagger-ui.html").permitAll();
-                                        }
-                                        auth.requestMatchers("/promocoes/**").authenticated()
-                                                        .requestMatchers("/programas/**").authenticated()
-                                                        .anyRequest().authenticated();
-                                })
-                                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(cors -> cors.configure(http))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(headers -> headers
+                        .contentTypeOptions(c -> {
+                        })
+                        .frameOptions(f -> f.deny())
+                        .xssProtection(x -> {
+                        })
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000))
+                        .referrerPolicy(r -> r
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)))
+                .requiresChannel(channel -> {
+                    if (isProd()) {
+                        // Em produção, força HTTPS inclusive via proxy (X-Forwarded-Proto)
+                        channel.anyRequest().requiresSecure();
+                    }
+                })
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/auth/**").permitAll();
+                    auth.requestMatchers("/actuator/health").permitAll();
+                    auth.requestMatchers("/uploads/**").permitAll(); // <--- Rota de imagens liberada aqui
+                    if (isSwaggerPublic()) {
+                        auth.requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html").permitAll();
+                    }
+                    auth.requestMatchers("/promocoes/**").authenticated()
+                            .requestMatchers("/programas/**").authenticated()
+                            .anyRequest().authenticated();
+                })
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-                return http.build();
-        }
+        return http.build();
+    }
 
-        @Bean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-                return authConfig.getAuthenticationManager();
-        }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

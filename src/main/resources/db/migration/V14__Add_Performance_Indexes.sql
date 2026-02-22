@@ -12,7 +12,7 @@ CREATE INDEX IF NOT EXISTS idx_compra_status_data ON milhas.compra(status, data_
 CREATE INDEX IF NOT EXISTS idx_cartao_usuario_id ON milhas.cartao(usuario_id);
 
 -- Movimentação de pontos: filtro por usuario e data de movimentação
-CREATE INDEX IF NOT EXISTS idx_movimentacao_usuario_id ON milhas.movimentacao_pontos(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_movimentacao_saldo_id ON milhas.movimentacao_pontos(saldo_pontos_id);
 CREATE INDEX IF NOT EXISTS idx_movimentacao_data ON milhas.movimentacao_pontos(data_movimentacao);
 
 -- Notificação: listagem por usuário e status de leitura

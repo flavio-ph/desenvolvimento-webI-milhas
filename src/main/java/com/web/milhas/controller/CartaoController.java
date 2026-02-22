@@ -36,6 +36,15 @@ public class CartaoController {
         return ResponseEntity.ok(cartaoService.listarCartoes(userDetails.getUsername()));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CartaoResponse> buscarPorId(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id) {
+
+        CartaoResponse response = cartaoService.buscarCartaoPorId(id, userDetails.getUsername());
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -54,5 +63,7 @@ public class CartaoController {
         CartaoResponse response = cartaoService.atualizarCartao(id, dto, userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
+
+
 
 }

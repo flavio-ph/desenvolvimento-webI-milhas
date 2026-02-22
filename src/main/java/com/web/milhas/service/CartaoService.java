@@ -10,4 +10,6 @@ public interface CartaoService {
     CartaoResponse atualizarCartao(Long id, CartaoRequest dto, String emailUsuario);
     List<CartaoResponse> listarCartoes(String emailUsuario);
     void excluirCartao(Long idCartao, String emailUsuario);
+
+    CartaoResponse buscarCartaoPorId(Long id, String username);
 }

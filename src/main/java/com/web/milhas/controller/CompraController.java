@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,6 +50,17 @@ public class CompraController {
 
         ResumoPendentesDTO resumo = compraService.calcularResumoPendentes(userDetails.getUsername());
         return ResponseEntity.ok(resumo);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listarCompras(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(required = false) Long cartaoId,
+            Pageable pageable) {
+
+
+
+        return ResponseEntity.ok(compraService.listarCompras(userDetails.getUsername(), cartaoId, pageable));
     }
 
     @PutMapping("/{id}/creditar")
