@@ -34,4 +34,9 @@ public interface CompraRepository extends JpaRepository<CompraEntity, Long> {
     @Query("SELECT MIN(c.dataCreditoPrevista) FROM CompraEntity c " +
             "WHERE c.cartao.usuario.id = :usuarioId AND c.status = :status")
     LocalDate findProximaDataCredito(@Param("usuarioId") Long usuarioId, @Param("status") StatusCompra status);
+
+    org.springframework.data.domain.Page<CompraEntity> findByCartaoId(Long cartaoId, org.springframework.data.domain.Pageable pageable);
+
+    org.springframework.data.domain.Page<CompraEntity> findByCartaoUsuarioId(Long usuarioId, org.springframework.data.domain.Pageable pageable);
+
 }

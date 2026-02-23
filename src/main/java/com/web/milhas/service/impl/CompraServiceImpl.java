@@ -119,4 +119,28 @@ public class CompraServiceImpl implements CompraService {
         compraRepository.save(compra);
         movimentacaoService.gerarCreditoCompra(compra);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public org.springframework.data.domain.Page<CompraResponse> listarCompras(String emailUsuario, Long cartaoId, org.springframework.data.domain.Pageable pageable) {
+        UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        org.springframework.data.domain.Page<CompraEntity> compras;
+
+        if (cartaoId != null) {
+            CartaoEntity cartao = cartaoRepository.findById(cartaoId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Cartão não encontrado."));
+
+            if (!cartao.getUsuario().getId().equals(usuario.getId())) {
+                throw new ResourceNotFoundException("Cartão não pertence a este usuário.");
+            }
+            compras = compraRepository.findByCartaoId(cartaoId, pageable);
+        } else {
+            compras = compraRepository.findByCartaoUsuarioId(usuario.getId(), pageable);
+        }
+
+        return compras.map(compraMapper::toResponse);
+    }
+
 }

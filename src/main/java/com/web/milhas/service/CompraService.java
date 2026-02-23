@@ -16,5 +16,4 @@ public interface CompraService {
 
     void creditarCompra(Long compraId, String emailUsuario);
 
-    Object listarCompras(String username, Long cartaoId, Pageable pageable);
-}
+    org.springframework.data.domain.Page<CompraResponse> listarCompras(String username, Long cartaoId, Pageable pageable);}

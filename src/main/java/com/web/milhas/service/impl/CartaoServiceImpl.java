@@ -115,4 +115,21 @@ public class CartaoServiceImpl implements CartaoService {
         CartaoEntity atualizado = cartaoRepository.save(cartao);
         return cartaoMapper.toResponse(atualizado);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CartaoResponse buscarCartaoPorId(Long id, String emailUsuario) {
+        UsuarioEntity usuario = usuarioRepository.findEntityByEmail(emailUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        CartaoEntity cartao = cartaoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cartão não encontrado."));
+
+        if (!cartao.getUsuario().getId().equals(usuario.getId())) {
+            throw new ResourceNotFoundException("Cartão não pertence a este usuário.");
+        }
+
+        return cartaoMapper.toResponse(cartao);
+    }
+
 }
