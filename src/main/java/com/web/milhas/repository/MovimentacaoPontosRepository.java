@@ -53,15 +53,19 @@ List<MovimentacaoPontosEntity> findByUsuarioIdWithRelationships(@Param("usuarioI
         List<Object[]> findHistoricoAcumuloMensal(@Param("usuarioId") Long usuarioId);
 
     @Query("SELECT m FROM MovimentacaoPontosEntity m " +
+            "LEFT JOIN m.compra c " +
+            "LEFT JOIN c.cartao ca " +
             "WHERE m.saldoPontos.usuario.email = :email " +
             "AND (:mes IS NULL OR MONTH(m.dataMovimentacao) = :mes) " +
             "AND (:ano IS NULL OR YEAR(m.dataMovimentacao) = :ano) " +
-            "AND (:programaNome IS NULL OR m.saldoPontos.programaPontos.nome = :programaNome)")
+            "AND (:programaNome IS NULL OR m.saldoPontos.programaPontos.nome = :programaNome) " +
+            "AND (:cartaoId IS NULL OR ca.id = :cartaoId)") // <-- FILTRO DE CARTÃO AQUI
     Page<MovimentacaoPontosEntity> filtrarMovimentacoes(
             @Param("email") String email,
             @Param("mes") Integer mes,
             @Param("ano") Integer ano,
             @Param("programaNome") String programaNome,
-            Pageable pageable // Novo parâmetro
+            @Param("cartaoId") Long cartaoId, // <-- ADICIONE AQUI
+            Pageable pageable
     );
 }

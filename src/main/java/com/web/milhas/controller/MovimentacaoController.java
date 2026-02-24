@@ -42,10 +42,11 @@ public class MovimentacaoController {
             @RequestParam(required = false) Integer ano,
             @RequestParam(required = false) String programa,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long cartaoId,
             @PageableDefault(size = 10, sort = "dataMovimentacao", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<MovimentacaoPontosResponse> response = movimentacaoService.listarMovimentacoes(
-                userDetails.getUsername(), mes, ano, programa, status, pageable);
+                userDetails.getUsername(), mes, ano, programa, cartaoId,status, pageable);
 
         return ResponseEntity.ok(response);
     }

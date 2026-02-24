@@ -34,9 +34,8 @@ public class RelatorioServiceImpl implements RelatorioService {
 
     @Override
     public byte[] gerarCsvMovimentacoes(String emailUsuario) {
-        // Extrai a lista completa desativando a paginação via unpaged()
         Page<MovimentacaoPontosResponse> pagina = movimentacaoService.listarMovimentacoes(
-                emailUsuario, null, null, null, null, Pageable.unpaged()
+                emailUsuario, null, null, null, null, null, Pageable.unpaged()
         );
         List<MovimentacaoPontosResponse> movimentacoes = pagina.getContent();
 
@@ -44,13 +43,14 @@ public class RelatorioServiceImpl implements RelatorioService {
              OutputStreamWriter osw = new OutputStreamWriter(baos);
              CSVWriter writer = new CSVWriter(osw)) {
 
-            writer.writeNext(new String[]{"Data", "Tipo", "Programa", "Pontos", "Descrição"});
+            writer.writeNext(new String[]{"Data", "Tipo", "Programa", "Cartão", "Pontos", "Descrição"});
 
             for (MovimentacaoPontosResponse mov : movimentacoes) {
                 writer.writeNext(new String[]{
                         mov.dataMovimentacao().format(DATE_FORMATTER),
                         mov.tipo().name(),
                         mov.nomePrograma(),
+                        mov.nomeCartao() != null ? mov.nomeCartao() : "—",
                         mov.quantidadePontos().toString(),
                         mov.descricao()
                 });
@@ -70,7 +70,7 @@ public class RelatorioServiceImpl implements RelatorioService {
 
         // Extrai a lista completa desativando a paginação via unpaged()
         Page<MovimentacaoPontosResponse> pagina = movimentacaoService.listarMovimentacoes(
-                emailUsuario, null, null, null, null, Pageable.unpaged()
+                emailUsuario, null, null, null, null, null,Pageable.unpaged()
         );
         List<MovimentacaoPontosResponse> movimentacoes = pagina.getContent();
 

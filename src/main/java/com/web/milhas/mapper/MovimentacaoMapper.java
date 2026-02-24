@@ -10,6 +10,7 @@ import java.util.List;
 public interface MovimentacaoMapper {
 
     @Mapping(source = "saldoPontos.programaPontos.nome", target = "nomePrograma")
+    @Mapping(source = "compra.cartao.nomePersonalizado", target = "nomeCartao")
     MovimentacaoPontosResponse toResponse(MovimentacaoPontosEntity entity);
 
     List<MovimentacaoPontosResponse> toResponseList(List<MovimentacaoPontosEntity> entities);

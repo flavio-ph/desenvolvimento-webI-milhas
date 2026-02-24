@@ -63,13 +63,17 @@ public class DashboardServiceImpl implements DashboardService {
                 )
         );
 
-        // Adição das compras pendentes à lista de movimentações para visualização no dashboard
         compraRepository.findByCartaoUsuarioId(usuario.getId()).stream()
                 .filter(c -> c.getStatus() == StatusCompra.PENDENTE)
                 .forEach(c -> todas.add(new MovimentacaoPontosResponse(
-                        c.getId(), TipoMovimentacao.ACUMULO, c.getPontosCalculados(),
-                        c.getDataCompra().atStartOfDay(), c.getDescricao() + " (Pendente)",
-                        c.getCartao().getProgramaPontos().getNome())));
+                        c.getId(),
+                        TipoMovimentacao.ACUMULO,
+                        c.getPontosCalculados(),
+                        c.getDataCompra().atStartOfDay(),
+                        c.getDescricao() + " (Pendente)",
+                        c.getCartao().getProgramaPontos().getNome(),
+                        c.getCartao().getNomePersonalizado() // <-- ADICIONE ESTA LINHA
+                )));
 
         List<MovimentacaoPontosResponse> ultimas = todas.stream()
                 .sorted((a, b) -> b.dataMovimentacao().compareTo(a.dataMovimentacao()))

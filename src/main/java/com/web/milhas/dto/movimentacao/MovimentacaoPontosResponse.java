@@ -10,5 +10,6 @@ public record MovimentacaoPontosResponse(
     BigDecimal quantidadePontos,
     LocalDateTime dataMovimentacao,
     String descricao,
-    String nomePrograma
+    String nomePrograma,
+    String nomeCartao
 ) {}

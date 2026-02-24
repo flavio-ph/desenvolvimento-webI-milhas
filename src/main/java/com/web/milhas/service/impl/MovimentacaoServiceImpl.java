@@ -53,6 +53,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
             Integer mes,
             Integer ano,
             String programa,
+            Long cartaoId, // <-- ADICIONE AQUI
             String status,
             Pageable pageable) {
 
@@ -63,7 +64,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         String filtroPrograma = (programa == null || programa.equals("ALL") || programa.isEmpty()) ? null : programa;
 
         Page<MovimentacaoPontosEntity> paginaEntidades = movimentacaoRepository.filtrarMovimentacoes(
-                emailUsuario, mes, ano, filtroPrograma, pageable);
+                emailUsuario, mes, ano, filtroPrograma, cartaoId, pageable);
 
         return paginaEntidades.map(movimentacaoMapper::toResponse);
     }

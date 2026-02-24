@@ -19,6 +19,7 @@ public interface MovimentacaoService {
             Integer mes,
             Integer ano,
             String programa,
+            Long cartaoId,
             String status,
             Pageable pageable);
     BigDecimal consultarPontosExpirando(String emailUsuario, int dias);
