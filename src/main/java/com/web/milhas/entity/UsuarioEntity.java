@@ -55,6 +55,12 @@ public class UsuarioEntity implements UserDetails {
     @Column(name = "two_factor_enabled")
     private boolean twoFactorEnabled = false;
 
+    @Column(name = "two_factor_code")
+    private String twoFactorCode;
+
+    @Column(name = "two_factor_expiry")
+    private LocalDateTime twoFactorExpiry;
+
     @Column(name = "verification_code")
     private String verificationCode;
 
