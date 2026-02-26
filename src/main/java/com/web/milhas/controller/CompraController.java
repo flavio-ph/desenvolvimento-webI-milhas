@@ -5,14 +5,14 @@ import com.web.milhas.dto.compra.CompraResponse;
 import com.web.milhas.dto.dashboard.ResumoPendentesDTO;
 import com.web.milhas.service.CompraService;
 import com.web.milhas.service.FileUploadService;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaTypeFactory;
 
-import java.math.BigDecimal;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +58,6 @@ public class CompraController {
             @RequestParam(required = false) Long cartaoId,
             Pageable pageable) {
 
-
-
         return ResponseEntity.ok(compraService.listarCompras(userDetails.getUsername(), cartaoId, pageable));
     }
 
@@ -70,4 +68,21 @@ public class CompraController {
         compraService.creditarCompra(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{compraId}/comprovante")
+    public ResponseEntity<Resource> baixarComprovante(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long compraId) {
+
+        Resource file = compraService.baixarComprovante(compraId, userDetails.getUsername());
+
+        MediaType mediaType = MediaTypeFactory.getMediaType((org.springframework.core.io.Resource) file)
+                .orElse(MediaType.APPLICATION_OCTET_STREAM);
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + ((org.springframework.core.io.Resource) file).getFilename() + "\"")
+                .body(file);
+    }
+
 }

@@ -5,6 +5,7 @@ import com.web.milhas.dto.compra.CompraResponse;
 import com.web.milhas.dto.dashboard.ResumoPendentesDTO;
 import com.web.milhas.entity.CartaoEntity;
 import com.web.milhas.entity.CompraEntity;
+import com.web.milhas.entity.ComprovanteCompraEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.StatusCompra;
 import com.web.milhas.exception.RegraNegocioException;
@@ -12,14 +13,21 @@ import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.mapper.CompraMapper; // Novo import
 import com.web.milhas.repository.CartaoRepository;
 import com.web.milhas.repository.CompraRepository;
+import com.web.milhas.repository.ComprovanteCompraRepository;
 import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.CompraService;
 import com.web.milhas.service.MovimentacaoService;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 @Service
@@ -31,6 +39,7 @@ public class CompraServiceImpl implements CompraService {
     private final CartaoRepository cartaoRepository;
     private final UsuarioRepository usuarioRepository;
     private final CompraMapper compraMapper;
+    private final ComprovanteCompraRepository comprovanteCompraRepository;
 
     @Override
     @Transactional
@@ -118,6 +127,28 @@ public class CompraServiceImpl implements CompraService {
         compra.setStatus(StatusCompra.CREDITADO);
         compraRepository.save(compra);
         movimentacaoService.gerarCreditoCompra(compra);
+    }
+
+    @Override
+    public Resource baixarComprovante(Long compraId, String emailUsuario) {
+        CompraEntity compra = compraRepository.findById(compraId)
+                .orElseThrow(() -> new ResourceNotFoundException("Compra não encontrada."));
+
+        if (!compra.getCartao().getUsuario().getEmail().equals(emailUsuario)) {
+            throw new RegraNegocioException("Acesso negado a este comprovante.");
+        }
+
+        ComprovanteCompraEntity comprovante = comprovanteCompraRepository.findByCompraId(compraId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comprovante não encontrado para esta compra."));
+
+        Path filePath = Paths.get(comprovante.getUrlArquivo()).normalize();
+        FileSystemResource resource = new FileSystemResource(filePath);
+
+        if (resource.exists() && resource.isReadable()) {
+            return (Resource) resource;
+        } else {
+            throw new ResourceNotFoundException("Arquivo não encontrado ou inacessível no disco.");
+        }
     }
 
     @Override
