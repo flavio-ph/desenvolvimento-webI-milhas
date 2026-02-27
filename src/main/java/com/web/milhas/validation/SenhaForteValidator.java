@@ -14,8 +14,9 @@ public class SenhaForteValidator implements ConstraintValidator<SenhaForte, Stri
 
     @Override
     public boolean isValid(String senha, ConstraintValidatorContext context) {
+        // Se a senha for nula, assume-se que o utilizador não quer alterá-la.
         if (senha == null || senha.isBlank()) {
-            return false;
+            return true;
         }
 
         PasswordValidator validator = new PasswordValidator(List.of(

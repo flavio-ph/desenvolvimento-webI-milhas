@@ -8,13 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param; // Import essencial
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CartaoRepository extends JpaRepository<CartaoEntity, Long> {
 
     long countByBandeira(BandeiraEntity bandeira);
 
-    @EntityGraph(attributePaths = {"bandeira", "programaPontos"})
+    @EntityGraph(attributePaths = { "bandeira", "programaPontos" })
     List<CartaoEntity> findByUsuarioId(Long usuarioId);
 
+    @EntityGraph(attributePaths = { "bandeira", "programaPontos" })
+    Page<CartaoEntity> findAll(Pageable pageable);
 
 }
