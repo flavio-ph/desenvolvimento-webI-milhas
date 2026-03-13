@@ -26,6 +26,11 @@ public class GlobalExceptionHandler {
         return buildProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), "Recurso Não Encontrado", req);
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ProblemDetail handleForbidden(ForbiddenException ex, WebRequest req) {
+        return buildProblemDetail(HttpStatus.FORBIDDEN, ex.getMessage(), "Acesso Negado", req);
+    }
+
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ProblemDetail handleEmailExists(EmailAlreadyExistsException ex, WebRequest req) {
         return buildProblemDetail(HttpStatus.BAD_REQUEST, ex.getMessage(), "Conflito de Dados", req);

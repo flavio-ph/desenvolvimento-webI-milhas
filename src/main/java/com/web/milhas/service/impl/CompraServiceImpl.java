@@ -8,6 +8,7 @@ import com.web.milhas.entity.CompraEntity;
 import com.web.milhas.entity.ComprovanteCompraEntity;
 import com.web.milhas.entity.UsuarioEntity;
 import com.web.milhas.entity.enums.StatusCompra;
+import com.web.milhas.exception.ForbiddenException;
 import com.web.milhas.exception.RegraNegocioException;
 import com.web.milhas.exception.ResourceNotFoundException;
 import com.web.milhas.mapper.CompraMapper; // Novo import
@@ -55,7 +56,7 @@ public class CompraServiceImpl implements CompraService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cartão não encontrado."));
 
         if (!cartao.getUsuario().getId().equals(usuario.getId())) {
-            throw new ResourceNotFoundException("Cartão não pertence ao usuário.");
+            throw new ForbiddenException("Cartão não pertence ao usuário.");
         }
 
         LocalDate dataAtual = LocalDate.now();
@@ -117,7 +118,7 @@ public class CompraServiceImpl implements CompraService {
                 .orElseThrow(() -> new ResourceNotFoundException("Compra não encontrada."));
 
         if (!compra.getCartao().getUsuario().getId().equals(usuario.getId())) {
-            throw new ResourceNotFoundException("Compra não pertence ao usuário.");
+            throw new ForbiddenException("Compra não pertence ao usuário.");
         }
 
         if (compra.getStatus() == StatusCompra.CREDITADO) {
