@@ -1,4 +1,4 @@
-# Milhas Web API — Backend
+# MilhasPro — Backend
 
 ![Java](https://img.shields.io/badge/Java-21-blue?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)
