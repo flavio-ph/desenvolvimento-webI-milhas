@@ -22,7 +22,7 @@ Repositorio front-end: [Projeto-Web-1-FrontEnd](https://github.com/flavio-ph/des
 
 ## Funcionalidades
 
-- Autenticacao com JWT, recuperacao de senha por e-mail e suporte a autenticacao de dois fatores (2FA)
+- Autenticacao com JWT, recuperacao de senha e suporte a autenticacao de dois fatores (2FA)
 - Gerenciamento de cartoes com bandeiras e programas de pontos associados
 - Registro de compras e calculo automatico de pontos com base no fator de conversao
 - Deteccao de promocoes ativas e aplicacao de bonus de pontuacao
