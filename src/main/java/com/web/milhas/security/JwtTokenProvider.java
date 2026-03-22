@@ -2,7 +2,6 @@ package com.web.milhas.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -39,20 +38,19 @@ public class JwtTokenProvider {
         Date agora = new Date();
         Date expiracao = new Date(agora.getTime() + expirationMillis);
 
-        // Extrai as roles/authorities e junta em uma string separada por vírgulas
         String roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", roles); 
+        claims.put("roles", roles);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(agora)
-                .setExpiration(expiracao)
-                .signWith(signingKey, SignatureAlgorithm.HS512)
+                .claims(claims)
+                .subject(username)
+                .issuedAt(agora)
+                .expiration(expiracao)
+                .signWith(signingKey)
                 .compact();
     }
 
@@ -70,10 +68,10 @@ public class JwtTokenProvider {
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+        return Jwts.parser()
+                .verifyWith(signingKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
-}
+}
