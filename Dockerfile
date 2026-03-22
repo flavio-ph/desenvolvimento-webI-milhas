@@ -1,24 +1,26 @@
-# Estágio 1: Build (Compilação com JDK 21)
+# Estágio 1: Build
 FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
 
-# Copia os arquivos de build do Maven
+# Copia apenas os arquivos de dependência primeiro (otimiza cache do Docker)
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
-# Baixa as dependências
+RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline
 
-# Copia o código-fonte e constrói o .jar
+# Copia o código-fonte e gera o build
 COPY src ./src
-# Usa o artifactId 'milhas' e a versão do pom.xml
 RUN ./mvnw clean package -DskipTests
 
-# Estágio 2: Runtime (Execução com JRE 21)
+# Estágio 2: Runtime
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-# Copia o .jar final do estágio de build
-COPY --from=build /app/target/milhas-0.0.1-SNAPSHOT.jar app.jar
+# Uso de wildcard (*) para evitar erro se a versão no pom.xml mudar
+COPY --from=build /app/target/*.jar app.jar
+
+# Configurações de performance para containers
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
