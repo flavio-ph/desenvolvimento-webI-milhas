@@ -63,7 +63,6 @@ public class SecurityConfig {
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)))
                 .requiresChannel(channel -> {
                     if (isProd()) {
-                        // Em produção, força HTTPS inclusive via proxy (X-Forwarded-Proto)
                         channel.anyRequest().requiresSecure();
                     }
                 })

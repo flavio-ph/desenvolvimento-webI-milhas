@@ -14,12 +14,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Filtro de rate limiting aplicado apenas aos endpoints sensíveis de
- * autenticação.
- * Limita cada IP a 10 requisições por minuto em /auth/login e
- * /auth/forgot-password.
- */
+
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 

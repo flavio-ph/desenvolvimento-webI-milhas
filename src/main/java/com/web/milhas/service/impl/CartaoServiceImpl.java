@@ -29,7 +29,7 @@ public class CartaoServiceImpl implements CartaoService {
     private final ProgramaPontosRepository programaPontosRepository;
     private final CompraRepository compraRepository;
     private final SaldoService saldoService;
-    private final CartaoMapper cartaoMapper; // Injeção do Mapper
+    private final CartaoMapper cartaoMapper;
 
     @Override
     @Transactional
@@ -54,7 +54,7 @@ public class CartaoServiceImpl implements CartaoService {
 
         saldoService.inicializarSaldoPorCartao(salvo.getUsuario(), salvo.getProgramaPontos());
 
-        return cartaoMapper.toResponse(salvo); // Conversão via Mapper
+        return cartaoMapper.toResponse(salvo);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CartaoServiceImpl implements CartaoService {
 
         List<CartaoEntity> cartoes = cartaoRepository.findByUsuarioId(usuario.getId());
 
-        return cartaoMapper.toResponseList(cartoes); // Conversão de lista via Mapper
+        return cartaoMapper.toResponseList(cartoes);
     }
 
     @Override
