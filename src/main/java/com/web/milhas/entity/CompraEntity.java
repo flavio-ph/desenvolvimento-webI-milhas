@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.net.ssl.SSLSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
@@ -48,4 +49,6 @@ public class CompraEntity {
 
     @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ComprovanteCompraEntity> comprovantes;
+
+
 }

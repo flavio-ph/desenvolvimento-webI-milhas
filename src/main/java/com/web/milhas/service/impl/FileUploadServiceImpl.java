@@ -10,12 +10,15 @@ import com.web.milhas.repository.UsuarioRepository;
 import com.web.milhas.service.FileUploadService;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -120,4 +123,22 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new RuntimeException("Erro ao salvar o comprovante.", ex);
         }
     }
+
+    @Override
+    public Resource loadAsResource(String nomeArquivo) {
+        try {
+            // resolve e normaliza o caminho para segurança
+            Path filePath = this.storageLocation.resolve(nomeArquivo).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new ResourceNotFoundException("O arquivo físico não foi encontrado ou não pode ser lido.");
+            }
+        } catch (MalformedURLException ex) {
+            throw new ResourceNotFoundException("Erro ao processar o caminho do arquivo.", ex);
+        }
+    }
+
 }
